@@ -32,7 +32,7 @@ export class ProseMirrorComponent implements OnInit {
       state: EditorState.create({
         schema: this.mySchema,
         doc: DOMParser.fromSchema(this.mySchema).parse(
-          this.content.nativeElement
+          this.content.nativeElement,
         ),
         plugins: exampleSetup({ schema: this.mySchema }),
       }),

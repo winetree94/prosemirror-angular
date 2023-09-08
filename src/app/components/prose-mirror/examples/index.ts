@@ -1,17 +1,17 @@
-import {keymap} from "prosemirror-keymap"
-import {history} from "prosemirror-history"
-import {baseKeymap} from "prosemirror-commands"
-import {Plugin} from "prosemirror-state"
-import {dropCursor} from "prosemirror-dropcursor"
-import {gapCursor} from "prosemirror-gapcursor"
-import {menuBar, MenuElement} from "prosemirror-menu"
-import {Schema} from "prosemirror-model"
+import { keymap } from 'prosemirror-keymap';
+import { history } from 'prosemirror-history';
+import { baseKeymap } from 'prosemirror-commands';
+import { Plugin } from 'prosemirror-state';
+import { dropCursor } from 'prosemirror-dropcursor';
+import { gapCursor } from 'prosemirror-gapcursor';
+import { menuBar, MenuElement } from 'prosemirror-menu';
+import { Schema } from 'prosemirror-model';
 
-import {buildMenuItems} from "./menu"
-import {buildKeymap} from "./keymap"
-import {buildInputRules} from "./inputrules"
+import { buildMenuItems } from './menu';
+import { buildKeymap } from './keymap';
+import { buildInputRules } from './inputrules';
 
-export {buildMenuItems, buildKeymap, buildInputRules}
+export { buildMenuItems, buildKeymap, buildInputRules };
 
 /// Create an array of plugins pre-configured for the given schema.
 /// The resulting array will include the following plugins:
@@ -42,39 +42,44 @@ export {buildMenuItems, buildKeymap, buildInputRules}
 
 export function exampleSetup(options: {
   /// The schema to generate key bindings and menu items for.
-  schema: Schema
+  schema: Schema;
 
   /// Can be used to [adjust](#example-setup.buildKeymap) the key bindings created.
-  mapKeys?: {[key: string]: string | false}
+  mapKeys?: { [key: string]: string | false };
 
   /// Set to false to disable the menu bar.
-  menuBar?: boolean
+  menuBar?: boolean;
 
   /// Set to false to disable the history plugin.
-  history?: boolean
+  history?: boolean;
 
   /// Set to false to make the menu bar non-floating.
-  floatingMenu?: boolean
+  floatingMenu?: boolean;
 
   /// Can be used to override the menu content.
-  menuContent?: MenuElement[][]
+  menuContent?: MenuElement[][];
 }) {
-  let plugins = [
+  const plugins = [
     buildInputRules(options.schema),
     keymap(buildKeymap(options.schema, options.mapKeys)),
     keymap(baseKeymap),
     dropCursor(),
-    gapCursor()
-  ]
+    gapCursor(),
+  ];
   if (options.menuBar !== false)
-    plugins.push(menuBar({floating: options.floatingMenu !== false,
-                          content: options.menuContent || buildMenuItems(options.schema).fullMenu}))
-  if (options.history !== false)
-    plugins.push(history())
+    plugins.push(
+      menuBar({
+        floating: options.floatingMenu !== false,
+        content: options.menuContent || buildMenuItems(options.schema).fullMenu,
+      }),
+    );
+  if (options.history !== false) plugins.push(history());
 
-  return plugins.concat(new Plugin({
-    props: {
-      attributes: {class: "ProseMirror-example-setup-style"}
-    }
-  }))
+  return plugins.concat(
+    new Plugin({
+      props: {
+        attributes: { class: 'ProseMirror-example-setup-style' },
+      },
+    }),
+  );
 }
