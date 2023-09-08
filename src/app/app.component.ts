@@ -7,7 +7,7 @@ import { ProseMirrorComponent } from 'src/app/components/prose-mirror/prose-mirr
   standalone: true,
   imports: [CommonModule, ProseMirrorComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'prosemirror-angular-standalone';

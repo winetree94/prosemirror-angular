@@ -13,11 +13,32 @@ import {
   MenuElement,
   MenuItemSpec,
 } from 'prosemirror-menu';
-import { NodeSelection, EditorState, Command } from 'prosemirror-state';
-import { Schema, NodeType, MarkType } from 'prosemirror-model';
+import {
+  NodeSelection,
+  EditorState,
+  Command,
+  Transaction,
+  TextSelection,
+} from 'prosemirror-state';
+import { Schema, NodeType, MarkType, Fragment, Node } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import { TextField, openPrompt } from './prompt';
+import {
+  addColumnAfter,
+  addColumnBefore,
+  addRowAfter,
+  addRowBefore,
+  deleteColumn,
+  deleteRow,
+  deleteTable,
+  mergeCells,
+  setCellAttr,
+  splitCell,
+  toggleHeaderCell,
+  toggleHeaderColumn,
+  toggleHeaderRow,
+} from 'prosemirror-tables';
 
 // Helpers to create specific types of items
 
@@ -137,11 +158,47 @@ function linkItem(markType: MarkType) {
   });
 }
 
+function insertTable() {
+  return (state: EditorState, dispatch: (tr: Transaction) => void): boolean => {
+    const offset: number = state.tr.selection.anchor + 1;
+    const transaction: Transaction = state.tr;
+    const cell: Node = state.schema.nodes[
+      'table_cell'
+    ].createAndFill() as unknown as Node;
+    const node: Node = state.schema.nodes['table'].create(
+      null,
+      Fragment.fromArray([
+        state.schema.nodes['table_row'].create(
+          null,
+          Fragment.fromArray([cell, cell, cell]),
+        ),
+        state.schema.nodes['table_row'].create(
+          null,
+          Fragment.fromArray([cell, cell, cell]),
+        ),
+      ]),
+    ) as unknown as Node;
+
+    if (dispatch) {
+      dispatch(
+        transaction
+          .replaceSelectionWith(node)
+          .scrollIntoView()
+          .setSelection(TextSelection.near(transaction.doc.resolve(offset))),
+      );
+    }
+
+    return true;
+  };
+}
+
 function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
   return cmdItem(wrapInList(nodeType, (options as any).attrs), options);
 }
 
 type MenuItemResult = {
+  createTable?: MenuItem;
+
   /// A menu item to toggle the [strong mark](#schema-basic.StrongMark).
   toggleStrong?: MenuItem;
 
@@ -319,5 +376,35 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
     r.blockMenu,
   );
 
+  function item(label: string, cmd: (state: EditorState) => boolean) {
+    return new MenuItem({ label, select: cmd, run: cmd });
+  }
+  const tableMenu = [
+    item('Insert column before', addColumnBefore),
+    item('Insert column after', addColumnAfter),
+    item('Delete column', deleteColumn),
+    item('Insert row before', addRowBefore),
+    item('Insert row after', addRowAfter),
+    item('Delete row', deleteRow),
+    item('Delete table', deleteTable),
+    item('Merge cells', mergeCells),
+    item('Split cell', splitCell),
+    item('Toggle header column', toggleHeaderColumn),
+    item('Toggle header row', toggleHeaderRow),
+    item('Toggle header cells', toggleHeaderCell),
+    item('Make cell green', setCellAttr('background', '#dfd')),
+    item('Make cell not-green', setCellAttr('background', null)),
+  ];
+  r.fullMenu.splice(2, 0, [
+    new MenuItem({
+      label: 'Add table',
+      title: 'Insert table',
+      class: 'ProseMirror-icon', // Здесь можно добавить класс
+      run: insertTable(),
+    }),
+    new Dropdown(tableMenu, { label: 'Table' }),
+  ]);
+
+  console.log(r);
   return r;
 }

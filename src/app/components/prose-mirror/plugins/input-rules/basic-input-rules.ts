@@ -1,12 +1,8 @@
 import {
-  inputRules,
   wrappingInputRule,
   textblockTypeInputRule,
-  smartQuotes,
-  emDash,
-  ellipsis,
 } from 'prosemirror-inputrules';
-import { NodeType, Schema } from 'prosemirror-model';
+import { NodeType } from 'prosemirror-model';
 
 /// Given a blockquote node type, returns an input rule that turns `"> "`
 /// at the start of a textblock into a blockquote.
@@ -48,17 +44,4 @@ export function headingRule(nodeType: NodeType, maxLevel: number) {
     nodeType,
     (match) => ({ level: match[1].length }),
   );
-}
-
-/// A set of input rules for creating the basic block quotes, lists,
-/// code blocks, and heading.
-export function buildInputRules(schema: Schema) {
-  const rules = smartQuotes.concat(ellipsis, emDash);
-  let type;
-  if ((type = schema.nodes['blockquote'])) rules.push(blockQuoteRule(type));
-  if ((type = schema.nodes['ordered_list'])) rules.push(orderedListRule(type));
-  if ((type = schema.nodes['bullet_list'])) rules.push(bulletListRule(type));
-  if ((type = schema.nodes['code_block'])) rules.push(codeBlockRule(type));
-  if ((type = schema.nodes['heading'])) rules.push(headingRule(type, 6));
-  return inputRules({ rules });
 }

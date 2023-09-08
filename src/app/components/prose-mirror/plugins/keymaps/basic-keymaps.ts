@@ -52,18 +52,10 @@ const mac =
 /// You can suppress or map these bindings by passing a `mapKeys`
 /// argument, which maps key names (say `"Mod-B"` to either `false`, to
 /// remove the binding, or a new key name string.
-export function buildKeymap(
-  schema: Schema,
-  mapKeys?: { [key: string]: false | string },
-) {
+export function buildBasicKeymap(schema: Schema) {
   const keys: { [key: string]: Command } = {};
   let type;
   function bind(key: string, cmd: Command) {
-    if (mapKeys) {
-      const mapped = mapKeys[key];
-      if (mapped === false) return;
-      if (mapped) key = mapped;
-    }
     keys[key] = cmd;
   }
 
