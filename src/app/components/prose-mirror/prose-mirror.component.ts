@@ -1,14 +1,9 @@
-import { Component, ElementRef, OnInit, ViewChild, createComponent } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { baseKeymap } from 'prosemirror-commands';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { history } from 'prosemirror-history';
-import {
-  ellipsis,
-  emDash,
-  inputRules,
-  smartQuotes,
-} from 'prosemirror-inputrules';
+import { ellipsis, inputRules, smartQuotes } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { menuBar } from 'prosemirror-menu';
 import { Schema } from 'prosemirror-model';
@@ -20,13 +15,13 @@ import {
   bulletListRule,
   codeBlockRule,
   headingRule,
+  horizontalSeparatorRule,
   orderedListRule,
 } from './plugins/input-rules/basic-input-rules';
 import { buildBasicKeymap } from './plugins/keymaps/basic-keymaps';
 import { buildMenuItems } from './plugins/menu-bar/basic-menu-items';
 import { basicSchema } from './schema/basic';
 import {
-  TableView,
   columnResizing,
   fixTables,
   goToNextCell,
@@ -74,12 +69,13 @@ export class ProseMirrorComponent implements OnInit {
           rules: [
             ...smartQuotes,
             ellipsis,
-            emDash,
+            // emDash,
             blockQuoteRule(this.mySchema.nodes['blockquote']),
             orderedListRule(this.mySchema.nodes['ordered_list']),
             bulletListRule(this.mySchema.nodes['bullet_list']),
             codeBlockRule(this.mySchema.nodes['code_block']),
             headingRule(this.mySchema.nodes['heading'], 6),
+            horizontalSeparatorRule(this.mySchema.nodes['horizontal_rule']),
           ],
         }),
         // 키맵 설정
@@ -104,6 +100,9 @@ export class ProseMirrorComponent implements OnInit {
     if (fix) state = state.apply(fix.setMeta('addToHistory', false));
 
     this.view = new EditorView(this.editor.nativeElement, {
+      attributes: {
+        spellcheck: 'false',
+      },
       state: state,
       nodeViews: {
         // table: (node, view, getPos) => {

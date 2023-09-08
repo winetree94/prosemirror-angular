@@ -19,7 +19,7 @@ export const BASIC_NODE_SPECS: NodeSpecs = {
   paragraph: {
     content: 'inline*',
     group: 'block',
-    parseDOM: [{ tag: 'p.lskdjf' }],
+    parseDOM: [{ tag: 'p' }],
     toDOM() {
       return pDOM;
     },

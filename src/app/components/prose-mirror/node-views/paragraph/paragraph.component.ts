@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'paragraph',
-  template: ``,
-  styleUrls: [],
+  template: `<ng-content></ng-content>`,
+  styleUrls: ['./paragraph.component.scss'],
+  standalone: true,
+  imports: [],
 })
-export class ParagraphComponent {
-  title = 'prosemirror-angular-standalone';
-}
+export class ParagraphComponent {}

@@ -45,3 +45,7 @@ export function headingRule(nodeType: NodeType, maxLevel: number) {
     (match) => ({ level: match[1].length }),
   );
 }
+
+export function horizontalSeparatorRule(nodeType: NodeType) {
+  return wrappingInputRule(/^---$/, nodeType);
+}
