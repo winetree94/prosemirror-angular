@@ -10,9 +10,8 @@
 
   .ProseMirror {
     position: relative;
-  }
-
-  .ProseMirror {
+    overflow: auto;
+    height: 100%;
     word-wrap: break-word;
     white-space: pre-wrap;
     white-space: break-spaces;

@@ -2,7 +2,7 @@ import { DOMOutputSpec } from 'prosemirror-model';
 import { NodeSpecs } from './models';
 import { tableNodes } from 'prosemirror-tables';
 
-const pDOM: DOMOutputSpec = ['p', 0];
+const pDOM: DOMOutputSpec = ['p', { class: 'ng-prosemirror-paragraph' }, 0];
 const blockquoteDOM: DOMOutputSpec = ['blockquote', 0];
 const hrDOM: DOMOutputSpec = ['hr'];
 const preDOM: DOMOutputSpec = ['pre', ['code', 0]];
@@ -19,7 +19,7 @@ export const BASIC_NODE_SPECS: NodeSpecs = {
   paragraph: {
     content: 'inline*',
     group: 'block',
-    parseDOM: [{ tag: 'p' }],
+    parseDOM: [{ tag: 'p.lskdjf' }],
     toDOM() {
       return pDOM;
     },

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, createComponent } from '@angular/core';
 import { baseKeymap } from 'prosemirror-commands';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
@@ -26,6 +26,7 @@ import { buildBasicKeymap } from './plugins/keymaps/basic-keymaps';
 import { buildMenuItems } from './plugins/menu-bar/basic-menu-items';
 import { basicSchema } from './schema/basic';
 import {
+  TableView,
   columnResizing,
   fixTables,
   goToNextCell,
@@ -104,6 +105,12 @@ export class ProseMirrorComponent implements OnInit {
 
     this.view = new EditorView(this.editor.nativeElement, {
       state: state,
+      nodeViews: {
+        // table: (node, view, getPos) => {
+        //   console.log(node, view, getPos);
+        //   return new TableView(node, 100);
+        // },
+      },
     });
 
     document.execCommand('enableObjectResizing', false, 'false');
