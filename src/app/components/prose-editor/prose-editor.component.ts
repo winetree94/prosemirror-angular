@@ -1,4 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ApplicationRef,
+  Component,
+  ElementRef,
+  EnvironmentInjector,
+  OnInit,
+  ViewChild,
+  createComponent,
+  inject,
+} from '@angular/core';
 import { baseKeymap, toggleMark } from 'prosemirror-commands';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
@@ -29,6 +38,7 @@ import { ProseMirrorComponent } from 'src/app/components/prose-mirror/prose-mirr
 import { EditorProps } from 'prosemirror-view';
 import { buildMenuItems } from 'src/app/components/prose-mirror/plugins/menu-bar/basic-menu-items';
 import { menuBar } from 'src/app/components/prose-mirror/plugins/menu-bar/menubar';
+import { ParagraphComponent } from 'src/app/components/prose-mirror/node-views/paragraph/paragraph.component';
 
 @Component({
   selector: 'ng-prose-editor',
@@ -38,6 +48,10 @@ import { menuBar } from 'src/app/components/prose-mirror/plugins/menu-bar/menuba
   imports: [ProseMirrorModule],
 })
 export class ProseEditorComponent implements OnInit {
+  private readonly applicationRef = inject(ApplicationRef);
+  private readonly elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
+  private readonly environmentInjector = inject(EnvironmentInjector);
+
   @ViewChild('proseMirror', { static: true })
   public proseMirror!: ProseMirrorComponent;
 
@@ -148,5 +162,11 @@ export class ProseEditorComponent implements OnInit {
 
   public ngOnInit(): void {
     console.log(this);
+    const comp = createComponent(ParagraphComponent, {
+      environmentInjector: this.environmentInjector,
+      // hostElement: this.elementRef.nativeElement,
+    });
+    this.elementRef.nativeElement.append(comp.location.nativeElement);
+    this.applicationRef.attachView(comp.hostView);
   }
 }

@@ -1,1 +1,5 @@
-<ng-prose-editor class="editor"> </ng-prose-editor>
+<div>
+  <button (click)="enable = !enable">toggle editor</button>
+</div>
+
+<ng-prose-editor *ngIf="enable" class="editor"> </ng-prose-editor>

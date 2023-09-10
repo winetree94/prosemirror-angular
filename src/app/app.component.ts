@@ -10,5 +10,5 @@ import { ProseEditorComponent } from 'src/app/components/prose-editor/prose-edit
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'prosemirror-angular-standalone';
+  enable = true;
 }
