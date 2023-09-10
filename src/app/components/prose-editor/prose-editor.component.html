@@ -1,0 +1,12 @@
+<div class="menubar-root">
+  <button (click)="toggleBold()">bold</button>
+  <button (click)="heading(2)">heading</button>
+  <button (click)="addHorizontalLine()">separator</button>
+</div>
+<div
+  class="editor-root"
+  #proseMirror
+  ngProseMirror
+  [state]="state"
+  [attributes]="attributes"
+></div>

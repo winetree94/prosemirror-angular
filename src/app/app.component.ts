@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProsemirrorModule } from './components/prose-mirror/prosemirror.module';
+import { ProseEditorComponent } from 'src/app/components/prose-editor/prose-editor.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, ProsemirrorModule],
+  imports: [CommonModule, ProseEditorComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

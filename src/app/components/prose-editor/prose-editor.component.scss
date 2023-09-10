@@ -1,17 +1,25 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   border: 1px solid gray;
 }
 
-::ng-deep.editor {
+.menubar-root {
+  flex-shrink: 0;
+}
+
+::ng-deep.editor-root {
+  display: flex;
+  flex: 1 1 auto;
+  overflow: auto;
   height: inherit;
   width: inherit;
   height: 500px;
 
   .ProseMirror {
+    flex: 1 1 auto;
     position: relative;
     overflow: auto;
-    height: 100%;
     word-wrap: break-word;
     white-space: pre-wrap;
     white-space: break-spaces;

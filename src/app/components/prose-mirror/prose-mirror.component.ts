@@ -1,118 +1,39 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { baseKeymap } from 'prosemirror-commands';
-import { dropCursor } from 'prosemirror-dropcursor';
-import { gapCursor } from 'prosemirror-gapcursor';
-import { history } from 'prosemirror-history';
-import { ellipsis, inputRules, smartQuotes } from 'prosemirror-inputrules';
-import { keymap } from 'prosemirror-keymap';
-import { menuBar } from 'prosemirror-menu';
-import { Schema } from 'prosemirror-model';
-import { addListNodes } from 'prosemirror-schema-list';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, ElementRef, Input, OnInit, inject } from '@angular/core';
 import { EditorState, Plugin } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
-import {
-  blockQuoteRule,
-  bulletListRule,
-  codeBlockRule,
-  headingRule,
-  horizontalSeparatorRule,
-  orderedListRule,
-} from './plugins/input-rules/basic-input-rules';
-import { buildBasicKeymap } from './plugins/keymaps/basic-keymaps';
-import { buildMenuItems } from './plugins/menu-bar/basic-menu-items';
-import { basicSchema } from './schema/basic';
-import {
-  columnResizing,
-  fixTables,
-  goToNextCell,
-  tableEditing,
-} from 'prosemirror-tables';
+import { DirectEditorProps, EditorView } from 'prosemirror-view';
 
 @Component({
-  selector: 'ng-prose-mirror',
-  templateUrl: './prose-mirror.component.html',
-  styleUrls: ['./prose-mirror.component.scss'],
+  selector: 'div[ngProseMirror]',
+  exportAs: 'ngProseMirror',
+  template: `<ng-content></ng-content>`,
   standalone: true,
-  imports: [],
 })
 export class ProseMirrorComponent implements OnInit {
-  @ViewChild('editor', { static: true })
-  private readonly editor!: ElementRef<HTMLDivElement>;
+  public readonly elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
+  public editorView!: EditorView;
 
-  @ViewChild('content', { static: true })
-  private readonly content!: ElementRef<HTMLDivElement>;
+  @Input()
+  public state!: EditorState;
 
-  public view!: EditorView;
+  @Input()
+  public plugins: Plugin[] = [];
 
-  public mySchema = new Schema({
-    nodes: addListNodes(
-      basicSchema.spec.nodes,
-      'paragraph (ordered_list | bullet_list)*',
-      'block',
-    ),
-    marks: basicSchema.spec.marks,
-  });
+  @Input()
+  public attributes: DirectEditorProps['attributes'] = {};
 
-  public ngOnInit() {
-    let state = EditorState.create({
-      schema: this.mySchema,
-      plugins: [
-        // table
-        columnResizing(),
-        tableEditing(),
-        keymap({
-          Tab: goToNextCell(1),
-          'Shift-Tab': goToNextCell(-1),
-        }),
-        // input 입력 시 동작할 것들
-        inputRules({
-          rules: [
-            ...smartQuotes,
-            ellipsis,
-            // emDash,
-            blockQuoteRule(this.mySchema.nodes['blockquote']),
-            orderedListRule(this.mySchema.nodes['ordered_list']),
-            bulletListRule(this.mySchema.nodes['bullet_list']),
-            codeBlockRule(this.mySchema.nodes['code_block']),
-            headingRule(this.mySchema.nodes['heading'], 6),
-            horizontalSeparatorRule(this.mySchema.nodes['horizontal_rule']),
-          ],
-        }),
-        // 키맵 설정
-        keymap(buildBasicKeymap(this.mySchema)),
-        keymap(baseKeymap),
-        dropCursor(),
-        gapCursor(),
-        menuBar({
-          floating: false,
-          content: buildMenuItems(this.mySchema).fullMenu,
-        }),
-        history(),
-        new Plugin({
-          props: {
-            attributes: { class: 'ProseMirror-Root-Class' },
-          },
-        }),
-      ],
+  @Input()
+  public nodeViews: DirectEditorProps['nodeViews'] = {};
+
+  @Input()
+  public dispatchTransaction: DirectEditorProps['dispatchTransaction'];
+
+  public ngOnInit(): void {
+    this.editorView = new EditorView(this.elementRef.nativeElement, {
+      state: this.state,
+      attributes: this.attributes,
+      nodeViews: this.nodeViews,
+      plugins: this.plugins,
     });
-
-    const fix = fixTables(state);
-    if (fix) state = state.apply(fix.setMeta('addToHistory', false));
-
-    this.view = new EditorView(this.editor.nativeElement, {
-      attributes: {
-        spellcheck: 'false',
-      },
-      state: state,
-      nodeViews: {
-        // table: (node, view, getPos) => {
-        //   console.log(node, view, getPos);
-        //   return new TableView(node, 100);
-        // },
-      },
-    });
-
-    document.execCommand('enableObjectResizing', false, 'false');
-    document.execCommand('enableInlineTableEditing', false, 'false');
   }
 }
