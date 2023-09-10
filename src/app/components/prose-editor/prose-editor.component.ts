@@ -27,8 +27,8 @@ import {
 import { ProseMirrorModule } from 'src/app/components/prose-mirror/prose-mirror.module';
 import { ProseMirrorComponent } from 'src/app/components/prose-mirror/prose-mirror.component';
 import { EditorProps } from 'prosemirror-view';
-import { menuBar } from 'prosemirror-menu';
 import { buildMenuItems } from 'src/app/components/prose-mirror/plugins/menu-bar/basic-menu-items';
+import { menuBar } from 'src/app/components/prose-mirror/plugins/menu-bar/menubar';
 
 @Component({
   selector: 'ng-prose-editor',

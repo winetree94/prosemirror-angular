@@ -12,7 +12,7 @@ import {
   MenuItem,
   MenuElement,
   MenuItemSpec,
-} from 'prosemirror-menu';
+} from './menu';
 import {
   NodeSelection,
   EditorState,
