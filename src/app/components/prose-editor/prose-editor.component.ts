@@ -5,6 +5,7 @@ import {
   EnvironmentInjector,
   OnInit,
   ViewChild,
+  ViewContainerRef,
   createComponent,
   inject,
 } from '@angular/core';
@@ -39,18 +40,22 @@ import { EditorProps } from 'prosemirror-view';
 import { buildMenuItems } from 'src/app/components/prose-mirror/plugins/menu-bar/basic-menu-items';
 import { menuBar } from 'src/app/components/prose-mirror/plugins/menu-bar/menubar';
 import { ParagraphComponent } from 'src/app/components/prose-mirror/node-views/paragraph/paragraph.component';
+import { ProseEditorMenubarComponent } from 'src/app/components/prose-editor/menubar/prose-editor-menubar.component';
 
 @Component({
   selector: 'ng-prose-editor',
   templateUrl: './prose-editor.component.html',
   styleUrls: ['./prose-editor.component.scss'],
   standalone: true,
-  imports: [ProseMirrorModule],
+  imports: [ProseMirrorModule, ProseEditorMenubarComponent],
 })
 export class ProseEditorComponent implements OnInit {
   private readonly applicationRef = inject(ApplicationRef);
   private readonly elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
   private readonly environmentInjector = inject(EnvironmentInjector);
+
+  @ViewChild('menubarContentRoot', { static: true, read: ViewContainerRef })
+  public menubarContentRoot!: ViewContainerRef;
 
   @ViewChild('proseMirror', { static: true })
   public proseMirror!: ProseMirrorComponent;

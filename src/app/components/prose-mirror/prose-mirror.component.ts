@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, ElementRef, Input, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EnvironmentInjector,
+  Input,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { EditorState, Plugin } from 'prosemirror-state';
 import { DirectEditorProps, EditorView } from 'prosemirror-view';
 
@@ -10,6 +17,7 @@ import { DirectEditorProps, EditorView } from 'prosemirror-view';
   standalone: true,
 })
 export class ProseMirrorComponent implements OnInit {
+  private readonly _environmentInjector = inject(EnvironmentInjector);
   public readonly elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
   public editorView!: EditorView;
 
