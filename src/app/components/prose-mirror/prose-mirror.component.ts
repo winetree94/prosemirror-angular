@@ -69,7 +69,11 @@ export class ProseMirrorComponent
         this._onChange?.(nextState);
         this._onTouched?.();
       },
-      handleKeyDown: this.handleKeydown,
+      handleKeyDown: (view, event) => {
+        if (this.handleKeydown) {
+          return this.handleKeydown(view, event);
+        }
+      },
       editable: () => !this._disabled,
     });
   }
