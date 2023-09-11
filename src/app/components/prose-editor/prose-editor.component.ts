@@ -44,6 +44,7 @@ import { ProseEditorMenubarComponent } from 'src/app/components/prose-editor/men
 import { BASE_NODES } from 'src/app/components/prose-mirror/schema/nodes/specs';
 import { BASE_MARKS } from './../prose-mirror/schema/marks/marks';
 import OrderedMap from 'orderedmap';
+import codemark from 'prosemirror-codemark';
 
 @Component({
   selector: 'ng-prose-editor',
@@ -85,8 +86,9 @@ export class ProseEditorComponent implements OnInit {
   public state = EditorState.create({
     schema: this.schema,
     plugins: [
+      ...codemark({ markType: this.schema.marks['code'] }),
       // table
-      columnResizing(),
+      // columnResizing(),
       tableEditing(),
       // input 입력 시 동작할 것들
       inputRules({
