@@ -1,10 +1,6 @@
 import { DOMOutputSpec } from 'prosemirror-model';
 import { MarkSpecs } from './models';
 
-const emDOM: DOMOutputSpec = ['em', 0];
-const strongDOM: DOMOutputSpec = ['strong', 0];
-const codeDOM: DOMOutputSpec = ['code', 0];
-
 const link: MarkSpecs = {
   /// A link. Has `href` and `title` attributes. `title`
   /// defaults to the empty string. Rendered and parsed as an `<a>`
@@ -34,35 +30,25 @@ const link: MarkSpecs = {
   },
 };
 
+const emDOM: DOMOutputSpec = ['em', 0];
 const em: MarkSpecs = {
   /// A link. Has `href` and `title` attributes. `title`
   /// defaults to the empty string. Rendered and parsed as an `<a>`
   /// element.
-  link: {
-    attrs: {
-      href: {},
-      title: { default: null },
-    },
-    inclusive: false,
+  em: {
     parseDOM: [
-      {
-        tag: 'a[href]',
-        getAttrs(node) {
-          const dom = node as HTMLElement;
-          return {
-            href: dom.getAttribute('href'),
-            title: dom.getAttribute('title'),
-          };
-        },
-      },
+      { tag: 'i' },
+      { tag: 'em' },
+      { style: 'font-style=italic' },
+      { style: 'font-style=normal', clearMark: (m) => m.type.name == 'em' },
     ],
-    toDOM(node) {
-      const { href, title } = node.attrs;
-      return ['a', { href, title }, 0];
+    toDOM() {
+      return emDOM;
     },
   },
 };
 
+const strongDOM: DOMOutputSpec = ['strong', 0];
 const strong: MarkSpecs = {
   /// A strong mark. Rendered as `<strong>`, parse rules also match
   /// `<b>` and `font-weight: bold`.
@@ -94,6 +80,7 @@ const strong: MarkSpecs = {
   },
 };
 
+const codeDOM: DOMOutputSpec = ['code', 0];
 const code: MarkSpecs = {
   /// Code font mark. Represented as a `<code>` element.
   code: {

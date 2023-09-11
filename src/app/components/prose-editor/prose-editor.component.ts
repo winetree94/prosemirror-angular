@@ -6,7 +6,6 @@ import {
   OnInit,
   ViewChild,
   ViewContainerRef,
-  createComponent,
   inject,
 } from '@angular/core';
 import { baseKeymap } from 'prosemirror-commands';
@@ -41,7 +40,6 @@ import { ProseMirrorComponent } from 'src/app/components/prose-mirror/prose-mirr
 import { EditorProps } from 'prosemirror-view';
 import { buildMenuItems } from 'src/app/components/prose-mirror/plugins/menu-bar/basic-menu-items';
 import { menuBar } from 'src/app/components/prose-mirror/plugins/menu-bar/menubar';
-import { ParagraphComponent } from 'src/app/components/prose-mirror/node-views/paragraph/paragraph.component';
 import { ProseEditorMenubarComponent } from 'src/app/components/prose-editor/menubar/prose-editor-menubar.component';
 import { BASE_NODES } from 'src/app/components/prose-mirror/schema/nodes/specs';
 import { BASE_MARKS } from './../prose-mirror/schema/marks/marks';
@@ -65,11 +63,11 @@ export class ProseEditorComponent implements OnInit {
   @ViewChild('proseMirror', { static: true })
   public proseMirror!: ProseMirrorComponent;
 
-  public schema = new Schema({
+  public readonly schema = new Schema({
     nodes: OrderedMap.from({
       ...BASE_NODES.DOC,
       ...BASE_NODES.TEXT,
-      ...BASE_NODES.PARAGRAPH_WITH_LIST.toObject(),
+      ...BASE_NODES.PARAGRAPH_WITH_LIST,
       ...BASE_NODES.BLOCKQUOTE,
       ...BASE_NODES.HORIZONTAL_RULE,
       ...BASE_NODES.HEADING,
@@ -192,12 +190,13 @@ export class ProseEditorComponent implements OnInit {
   // }
 
   public ngOnInit(): void {
-    // console.log(this);
-    const comp = createComponent(ParagraphComponent, {
-      environmentInjector: this.environmentInjector,
-      // hostElement: this.elementRef.nativeElement,
-    });
-    this.elementRef.nativeElement.append(comp.location.nativeElement);
-    this.applicationRef.attachView(comp.hostView);
+    return;
+    // // console.log(this);
+    // const comp = createComponent(ParagraphComponent, {
+    //   environmentInjector: this.environmentInjector,
+    //   // hostElement: this.elementRef.nativeElement,
+    // });
+    // this.elementRef.nativeElement.append(comp.location.nativeElement);
+    // this.applicationRef.attachView(comp.hostView);
   }
 }

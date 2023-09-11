@@ -37,7 +37,7 @@ export function codeBlockRule(nodeType: NodeType) {
 /// Given a node type and a maximum level, creates an input rule that
 /// turns up to that number of `#` characters followed by a space at
 /// the start of a textblock into a heading whose level corresponds to
-/// the number of `#` signs.
+/// the number of `#` ssicigns.
 export function headingRule(nodeType: NodeType, maxLevel: number) {
   return textblockTypeInputRule(
     new RegExp('^(#{1,' + maxLevel + '})\\s$'),

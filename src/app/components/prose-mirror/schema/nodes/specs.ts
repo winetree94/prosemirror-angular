@@ -29,9 +29,9 @@ const paragraph: NodeSpecs = {
 
 const paragraphWithList = addListNodes(
   OrderedMap.from(paragraph),
-  'block*',
+  'paragraph block*',
   'block',
-);
+).toObject();
 
 const blockquote: NodeSpecs = {
   blockquote: {
