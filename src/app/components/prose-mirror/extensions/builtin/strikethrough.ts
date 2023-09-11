@@ -3,7 +3,6 @@ import { PMPluginsFactory } from '../state';
 
 const strikethroughDOM: DOMOutputSpec = ['s', 0];
 const strikethrough: Record<string, MarkSpec> = {
-  /// Code font mark. Represented as a `<code>` element.
   strikethrough: {
     parseDOM: [{ tag: 's' }],
     toDOM() {
