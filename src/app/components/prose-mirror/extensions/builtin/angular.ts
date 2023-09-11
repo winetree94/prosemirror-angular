@@ -20,7 +20,7 @@ export const AngularAdapter = (
     return {
       nodes: {},
       marks: {},
-      plugins: (schema) => [
+      plugins: () => [
         new Plugin({
           view: (editor) => {
             return new config.view(

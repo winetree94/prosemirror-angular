@@ -6,7 +6,6 @@ import { toggleMark } from 'prosemirror-commands';
 
 const codeDOM: DOMOutputSpec = ['code', 0];
 const code: Record<string, MarkSpec> = {
-  /// Code font mark. Represented as a `<code>` element.
   code: {
     parseDOM: [{ tag: 'code' }],
     toDOM() {
@@ -24,7 +23,7 @@ export const Code = (): PMPluginsFactory => () => {
     plugins: (schema) => [
       ...codemark({ markType: schema.marks['code'] }),
       keymap({
-        'Mod-`': toggleMark(schema.marks['code']),
+        'Mod-C': toggleMark(schema.marks['code']),
       }),
     ],
   };
