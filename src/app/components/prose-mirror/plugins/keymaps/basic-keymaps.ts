@@ -19,11 +19,7 @@ import { undo, redo } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { Command } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
-
-const mac =
-  typeof navigator != 'undefined'
-    ? /Mac|iP(hone|[oa]d)/.test(navigator.platform)
-    : false;
+import { mac } from '../../utils/user-agent';
 
 /// Inspect the given schema looking for marks and nodes from the
 /// basic schema, and if found, add key bindings related to them.

@@ -29,12 +29,7 @@ import {
   orderedListRule,
 } from '../prose-mirror/plugins/input-rules/basic-input-rules';
 import { buildBasicKeymap } from '../prose-mirror/plugins/keymaps/basic-keymaps';
-import {
-  columnResizing,
-  fixTables,
-  goToNextCell,
-  tableEditing,
-} from 'prosemirror-tables';
+import { fixTables, goToNextCell, tableEditing } from 'prosemirror-tables';
 import { ProseMirrorModule } from 'src/app/components/prose-mirror/prose-mirror.module';
 import { ProseMirrorComponent } from 'src/app/components/prose-mirror/prose-mirror.component';
 import { EditorProps } from 'prosemirror-view';
@@ -111,9 +106,7 @@ export class ProseEditorComponent implements OnInit {
       keymap({
         ...buildBasicKeymap(this.schema),
       }),
-      keymap({
-        ...baseKeymap,
-      }),
+      keymap(baseKeymap),
       dropCursor(),
       gapCursor(),
       menuBar({
@@ -128,11 +121,11 @@ export class ProseEditorComponent implements OnInit {
       }),
       new Plugin({
         view: (editor) => {
-          console.log(editor);
-          console.log(this.menubarContentRoot);
+          // console.log(editor);
+          // console.log(this.menubarContentRoot);
           return {
             update: (view, state) => {
-              console.log('update', view, state);
+              // console.log('update', view, state);
               // console.log(view);
             },
           };
