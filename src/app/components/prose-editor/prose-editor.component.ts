@@ -2,13 +2,12 @@ import {
   ApplicationRef,
   Component,
   EnvironmentInjector,
-  OnInit,
   ViewChild,
   ViewContainerRef,
   forwardRef,
   inject,
 } from '@angular/core';
-import { EditorProps, EditorView } from 'prosemirror-view';
+import { EditorProps } from 'prosemirror-view';
 import { ProseMirrorModule } from '../prose-mirror/prose-mirror.module';
 import { ProseMirrorComponent } from '..//prose-mirror/prose-mirror.component';
 import { ProseEditorMenubarComponent } from './menubar/prose-editor-menubar.component';
@@ -55,7 +54,7 @@ import { Node } from 'prosemirror-model';
     },
   ],
 })
-export class ProseEditorComponent implements ControlValueAccessor, OnInit {
+export class ProseEditorComponent implements ControlValueAccessor {
   private readonly applicationRef = inject(ApplicationRef);
   private readonly environmentInjector = inject(EnvironmentInjector);
 
@@ -103,19 +102,9 @@ export class ProseEditorComponent implements ControlValueAccessor, OnInit {
     ],
   }).configure();
 
-  public constructor() {}
-
   public attributes: EditorProps['attributes'] = {
     spellcheck: 'false',
   };
-
-  public handleKeydown(view: EditorView, event: KeyboardEvent): boolean {
-    return false; // Let ProseMirror handle the event as usual
-  }
-
-  public ngOnInit(): void {
-    return;
-  }
 
   public writeValue(value: string): void {
     const node = Node.fromJSON(this.state.schema, JSON.parse(value));
