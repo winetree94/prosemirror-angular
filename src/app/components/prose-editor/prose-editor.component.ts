@@ -21,7 +21,6 @@ import {
 } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { Schema } from 'prosemirror-model';
-import { addListNodes } from 'prosemirror-schema-list';
 import { EditorState, Plugin } from 'prosemirror-state';
 import {
   blockQuoteRule,
@@ -44,9 +43,9 @@ import { buildMenuItems } from 'src/app/components/prose-mirror/plugins/menu-bar
 import { menuBar } from 'src/app/components/prose-mirror/plugins/menu-bar/menubar';
 import { ParagraphComponent } from 'src/app/components/prose-mirror/node-views/paragraph/paragraph.component';
 import { ProseEditorMenubarComponent } from 'src/app/components/prose-editor/menubar/prose-editor-menubar.component';
-import { BASIC_NODE_SPECS } from 'src/app/components/prose-mirror/schema/nodes/specs';
+import { BASE_NODES } from 'src/app/components/prose-mirror/schema/nodes/specs';
+import { BASE_MARKS } from './../prose-mirror/schema/marks/marks';
 import OrderedMap from 'orderedmap';
-import { BASIC_MARK_SPECS } from 'src/app/components/prose-mirror/schema/marks/marks';
 
 @Component({
   selector: 'ng-prose-editor',
@@ -67,12 +66,22 @@ export class ProseEditorComponent implements OnInit {
   public proseMirror!: ProseMirrorComponent;
 
   public schema = new Schema({
-    nodes: addListNodes(
-      OrderedMap.from(BASIC_NODE_SPECS),
-      'paragraph (ordered_list | bullet_list)*',
-      'block',
-    ),
-    marks: OrderedMap.from(BASIC_MARK_SPECS),
+    nodes: OrderedMap.from({
+      ...BASE_NODES.DOC,
+      ...BASE_NODES.TEXT,
+      ...BASE_NODES.PARAGRAPH_WITH_LIST.toObject(),
+      ...BASE_NODES.BLOCKQUOTE,
+      ...BASE_NODES.HORIZONTAL_RULE,
+      ...BASE_NODES.HEADING,
+      ...BASE_NODES.CODE_BLOCK,
+      ...BASE_NODES.TABLES,
+    }),
+    marks: OrderedMap.from({
+      ...BASE_MARKS.LINK,
+      ...BASE_MARKS.CODE,
+      ...BASE_MARKS.EM,
+      ...BASE_MARKS.STRONG,
+    }),
   });
 
   public state = EditorState.create({

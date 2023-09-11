@@ -5,8 +5,7 @@ const emDOM: DOMOutputSpec = ['em', 0];
 const strongDOM: DOMOutputSpec = ['strong', 0];
 const codeDOM: DOMOutputSpec = ['code', 0];
 
-/// [Specs](#model.MarkSpec) for the marks in the schema.
-export const BASIC_MARK_SPECS: MarkSpecs = {
+const link: MarkSpecs = {
   /// A link. Has `href` and `title` attributes. `title`
   /// defaults to the empty string. Rendered and parsed as an `<a>`
   /// element.
@@ -33,21 +32,38 @@ export const BASIC_MARK_SPECS: MarkSpecs = {
       return ['a', { href, title }, 0];
     },
   },
+};
 
-  /// An emphasis mark. Rendered as an `<em>` element. Has parse rules
-  /// that also match `<i>` and `font-style: italic`.
-  em: {
+const em: MarkSpecs = {
+  /// A link. Has `href` and `title` attributes. `title`
+  /// defaults to the empty string. Rendered and parsed as an `<a>`
+  /// element.
+  link: {
+    attrs: {
+      href: {},
+      title: { default: null },
+    },
+    inclusive: false,
     parseDOM: [
-      { tag: 'i' },
-      { tag: 'em' },
-      { style: 'font-style=italic' },
-      { style: 'font-style=normal', clearMark: (m) => m.type.name == 'em' },
+      {
+        tag: 'a[href]',
+        getAttrs(node) {
+          const dom = node as HTMLElement;
+          return {
+            href: dom.getAttribute('href'),
+            title: dom.getAttribute('title'),
+          };
+        },
+      },
     ],
-    toDOM() {
-      return emDOM;
+    toDOM(node) {
+      const { href, title } = node.attrs;
+      return ['a', { href, title }, 0];
     },
   },
+};
 
+const strong: MarkSpecs = {
   /// A strong mark. Rendered as `<strong>`, parse rules also match
   /// `<b>` and `font-weight: bold`.
   strong: {
@@ -76,7 +92,9 @@ export const BASIC_MARK_SPECS: MarkSpecs = {
       return strongDOM;
     },
   },
+};
 
+const code: MarkSpecs = {
   /// Code font mark. Represented as a `<code>` element.
   code: {
     parseDOM: [{ tag: 'code' }],
@@ -84,4 +102,11 @@ export const BASIC_MARK_SPECS: MarkSpecs = {
       return codeDOM;
     },
   },
+};
+
+export const BASE_MARKS = {
+  LINK: link,
+  EM: em,
+  STRONG: strong,
+  CODE: code,
 };

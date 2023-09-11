@@ -1,6 +1,8 @@
 import { DOMOutputSpec } from 'prosemirror-model';
 import { NodeSpecs } from './models';
 import { tableNodes } from 'prosemirror-tables';
+import OrderedMap from 'orderedmap';
+import { addListNodes } from 'prosemirror-schema-list';
 
 const pDOM: DOMOutputSpec = ['p', { class: 'ng-prosemirror-paragraph' }, 0];
 const blockquoteDOM: DOMOutputSpec = ['blockquote', 0];
@@ -8,14 +10,13 @@ const hrDOM: DOMOutputSpec = ['hr'];
 const preDOM: DOMOutputSpec = ['pre', ['code', 0]];
 const brDOM: DOMOutputSpec = ['br'];
 
-export const BASIC_NODE_SPECS: NodeSpecs = {
-  /// NodeSpec The top level document node.
+const doc: NodeSpecs = {
   doc: {
     content: 'block+',
   },
+};
 
-  /// A plain paragraph textblock. Represented in the DOM
-  /// as a `<p>` element.
+const paragraph: NodeSpecs = {
   paragraph: {
     content: 'inline*',
     group: 'block',
@@ -24,8 +25,15 @@ export const BASIC_NODE_SPECS: NodeSpecs = {
       return pDOM;
     },
   },
+};
 
-  /// A blockquote (`<blockquote>`) wrapping one or more blocks.
+const paragraphWithList = addListNodes(
+  OrderedMap.from(paragraph),
+  'block*',
+  'block',
+);
+
+const blockquote: NodeSpecs = {
   blockquote: {
     content: 'block+',
     group: 'block',
@@ -35,8 +43,9 @@ export const BASIC_NODE_SPECS: NodeSpecs = {
       return blockquoteDOM;
     },
   },
+};
 
-  /// A horizontal rule (`<hr>`).
+const horizontal_rule: NodeSpecs = {
   horizontal_rule: {
     group: 'block',
     parseDOM: [{ tag: 'hr' }],
@@ -44,10 +53,9 @@ export const BASIC_NODE_SPECS: NodeSpecs = {
       return hrDOM;
     },
   },
+};
 
-  /// A heading textblock, with a `level` attribute that
-  /// should hold the number 1 to 6. Parsed and serialized as `<h1>` to
-  /// `<h6>` elements.
+const heading: NodeSpecs = {
   heading: {
     attrs: { level: { default: 1 } },
     content: 'inline*',
@@ -65,10 +73,9 @@ export const BASIC_NODE_SPECS: NodeSpecs = {
       return ['h' + node.attrs['level'], 0];
     },
   },
+};
 
-  /// A code listing. Disallows marks or non-text inline
-  /// nodes by default. Represented as a `<pre>` element with a
-  /// `<code>` element inside of it.
+const code_block: NodeSpecs = {
   code_block: {
     content: 'text*',
     marks: '',
@@ -80,15 +87,15 @@ export const BASIC_NODE_SPECS: NodeSpecs = {
       return preDOM;
     },
   },
+};
 
-  /// The text node.
+const text: NodeSpecs = {
   text: {
     group: 'inline',
   },
+};
 
-  /// An inline image (`<img>`) node. Supports `src`,
-  /// `alt`, and `href` attributes. The latter two default to the empty
-  /// string.
+const image: NodeSpecs = {
   image: {
     inline: true,
     attrs: {
@@ -116,8 +123,9 @@ export const BASIC_NODE_SPECS: NodeSpecs = {
       return ['img', { src, alt, title }];
     },
   },
+};
 
-  /// A hard line break, represented in the DOM as `<br>`.
+const hard_break: NodeSpecs = {
   hard_break: {
     inline: true,
     group: 'inline',
@@ -127,7 +135,9 @@ export const BASIC_NODE_SPECS: NodeSpecs = {
       return brDOM;
     },
   },
+};
 
+const tables: NodeSpecs = {
   ...tableNodes({
     tableGroup: 'block',
     cellContent: 'block+',
@@ -145,4 +155,18 @@ export const BASIC_NODE_SPECS: NodeSpecs = {
       },
     },
   }),
+};
+
+export const BASE_NODES = {
+  DOC: doc,
+  PARAGRAPH: paragraph,
+  PARAGRAPH_WITH_LIST: paragraphWithList,
+  BLOCKQUOTE: blockquote,
+  HORIZONTAL_RULE: horizontal_rule,
+  HEADING: heading,
+  CODE_BLOCK: code_block,
+  TEXT: text,
+  IMAGE: image,
+  HARD_BREAK: hard_break,
+  TABLES: tables,
 };
