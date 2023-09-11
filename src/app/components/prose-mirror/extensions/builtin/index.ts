@@ -15,4 +15,5 @@ export * from './code';
 export * from './strikethrough';
 export * from './history';
 export * from './keymap';
+export * from './reset-on-empty';
 export * from './angular';

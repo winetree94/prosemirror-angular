@@ -3,9 +3,11 @@ import {
   Component,
   ElementRef,
   EnvironmentInjector,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  Output,
   inject,
 } from '@angular/core';
 import { EditorState, Plugin } from 'prosemirror-state';
@@ -39,6 +41,9 @@ export class ProseMirrorComponent implements OnInit, OnDestroy {
   @Input()
   public ngPlugins: Plugin[] = [];
 
+  @Input()
+  public handleKeydown: DirectEditorProps['handleKeyDown'];
+
   public ngOnInit(): void {
     this.editorView = new EditorView(this.elementRef.nativeElement, {
       state: this.state,
@@ -46,6 +51,7 @@ export class ProseMirrorComponent implements OnInit, OnDestroy {
       nodeViews: this.nodeViews,
       plugins: this.plugins,
       dispatchTransaction: this.dispatchTransaction,
+      handleKeyDown: this.handleKeydown,
     });
   }
 

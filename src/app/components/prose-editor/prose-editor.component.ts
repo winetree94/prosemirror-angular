@@ -11,7 +11,7 @@ import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { ProseMirrorModule } from 'src/app/components/prose-mirror/prose-mirror.module';
 import { ProseMirrorComponent } from 'src/app/components/prose-mirror/prose-mirror.component';
-import { EditorProps } from 'prosemirror-view';
+import { EditorProps, EditorView } from 'prosemirror-view';
 import { ProseEditorMenubarComponent } from 'src/app/components/prose-editor/menubar/prose-editor-menubar.component';
 import { PMEditor } from '../prose-mirror/extensions/state';
 import {
@@ -33,9 +33,12 @@ import {
   BasicKeymap,
   AngularAdapter,
   Strikethrough,
+  ResetOnEmpty,
 } from '../prose-mirror/extensions/builtin';
 import { EditorState } from 'prosemirror-state';
 import { NgMenubarView } from 'src/app/components/prose-editor/menubar/menubar';
+import { menuBar } from 'src/app/components/prose-mirror/plugins/menu-bar/menubar';
+import { buildMenuItems } from 'src/app/components/prose-mirror/plugins/menu-bar/basic-menu-items';
 
 @Component({
   selector: 'ng-prose-editor',
@@ -77,6 +80,7 @@ export class ProseEditorComponent implements OnInit {
       Code(),
       Strikethrough(),
       BasicKeymap(),
+      ResetOnEmpty(),
       AngularAdapter({
         applicationRef: this.applicationRef,
         environmentInjector: this.environmentInjector,
@@ -84,12 +88,22 @@ export class ProseEditorComponent implements OnInit {
       }),
       History(),
     ],
-    nativePlugins: () => [dropCursor(), gapCursor()],
+    nativePlugins: (schema) => [
+      dropCursor(),
+      gapCursor(),
+      menuBar({
+        content: buildMenuItems(schema).fullMenu,
+      }),
+    ],
   }).configure();
 
   public attributes: EditorProps['attributes'] = {
     spellcheck: 'false',
   };
+
+  public handleKeydown(view: EditorView, event: KeyboardEvent): boolean {
+    return false; // Let ProseMirror handle the event as usual
+  }
 
   public ngOnInit(): void {
     return;
