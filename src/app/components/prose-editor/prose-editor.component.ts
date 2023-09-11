@@ -12,7 +12,7 @@ import { EditorProps, EditorView } from 'prosemirror-view';
 import { ProseMirrorModule } from '../prose-mirror/prose-mirror.module';
 import { ProseMirrorComponent } from '..//prose-mirror/prose-mirror.component';
 import { ProseEditorMenubarComponent } from './menubar/prose-editor-menubar.component';
-import { PMEditor } from '../prose-mirror/extensions/state';
+import { PMEditor } from '../prose-mirror/extensions/extension';
 import {
   BlockQuote,
   Document,

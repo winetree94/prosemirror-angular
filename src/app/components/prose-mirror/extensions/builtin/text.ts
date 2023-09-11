@@ -1,5 +1,5 @@
 import { NodeSpec } from 'prosemirror-model';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 
 const text: Record<string, NodeSpec> = {
   text: {

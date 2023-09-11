@@ -1,5 +1,5 @@
 import { DOMOutputSpec, MarkSpec } from 'prosemirror-model';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 
 const strikethroughDOM: DOMOutputSpec = ['s', 0];
 const strikethrough: Record<string, MarkSpec> = {

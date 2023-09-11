@@ -7,7 +7,7 @@ import {
   wrapInList,
 } from 'prosemirror-schema-list';
 import OrderedMap from 'orderedmap';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 import { inputRules, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { setBlockType } from 'prosemirror-commands';

@@ -1,5 +1,5 @@
 import { DOMOutputSpec, MarkSpec } from 'prosemirror-model';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 import { emDash, inputRules } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { toggleMark } from 'prosemirror-commands';

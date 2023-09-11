@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 
 const hrDOM: DOMOutputSpec = ['hr'];
 const horizontal_rule: Record<string, NodeSpec> = {

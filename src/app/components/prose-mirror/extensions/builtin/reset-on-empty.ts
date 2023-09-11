@@ -1,5 +1,5 @@
 import { Plugin } from 'prosemirror-state';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 
 export const ResetOnEmpty = (): PMPluginsFactory => () => {
   return {

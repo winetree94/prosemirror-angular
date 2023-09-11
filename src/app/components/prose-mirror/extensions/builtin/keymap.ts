@@ -1,5 +1,5 @@
 import { keymap } from 'prosemirror-keymap';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 import { undoInputRule } from 'prosemirror-inputrules';
 import {
   baseKeymap,

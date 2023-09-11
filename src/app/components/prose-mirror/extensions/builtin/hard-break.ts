@@ -1,5 +1,5 @@
 import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 import { keymap } from 'prosemirror-keymap';
 import { chainCommands, exitCode } from 'prosemirror-commands';
 import { mac } from './../../utils/user-agent';

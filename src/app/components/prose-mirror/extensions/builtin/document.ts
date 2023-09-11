@@ -1,5 +1,5 @@
 import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 
 const doc: Record<string, NodeSpec> = {
   doc: {

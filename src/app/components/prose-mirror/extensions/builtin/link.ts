@@ -1,5 +1,5 @@
 import { MarkSpec } from 'prosemirror-model';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 
 const link: Record<string, MarkSpec> = {
   /// A link. Has `href` and `title` attributes. `title`

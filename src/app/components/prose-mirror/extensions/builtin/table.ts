@@ -5,7 +5,7 @@ import {
   tableEditing,
   tableNodes,
 } from 'prosemirror-tables';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 import { keymap } from 'prosemirror-keymap';
 
 const tables: Record<string, NodeSpec> = {

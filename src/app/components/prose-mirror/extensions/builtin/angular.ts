@@ -1,5 +1,5 @@
 import { ApplicationRef, EnvironmentInjector } from '@angular/core';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 import { Plugin, PluginView } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 

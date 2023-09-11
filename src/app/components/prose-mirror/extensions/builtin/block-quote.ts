@@ -2,7 +2,7 @@ import { wrapIn } from 'prosemirror-commands';
 import { inputRules, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { DOMOutputSpec, NodeSpec, NodeType } from 'prosemirror-model';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 
 const blockquoteDOM: DOMOutputSpec = ['blockquote', 0];
 const blockquote: Record<string, NodeSpec> = {

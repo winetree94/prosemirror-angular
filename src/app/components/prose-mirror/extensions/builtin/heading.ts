@@ -3,7 +3,7 @@ import { inputRules, textblockTypeInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { NodeSpec, NodeType } from 'prosemirror-model';
 import { Command } from 'prosemirror-state';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 
 export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 

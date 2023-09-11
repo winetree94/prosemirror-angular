@@ -1,5 +1,5 @@
 import { history, redo, undo } from 'prosemirror-history';
-import { PMPluginsFactory } from '../state';
+import { PMPluginsFactory } from '../extension';
 import { keymap } from 'prosemirror-keymap';
 
 export const History = (): PMPluginsFactory => () => {
