@@ -9,7 +9,7 @@ import {
   createComponent,
   inject,
 } from '@angular/core';
-import { baseKeymap, toggleMark } from 'prosemirror-commands';
+import { baseKeymap } from 'prosemirror-commands';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { history } from 'prosemirror-history';
