@@ -12,3 +12,5 @@ export * from './link';
 export * from './em';
 export * from './strong';
 export * from './code';
+export * from './history';
+export * from './keymap';

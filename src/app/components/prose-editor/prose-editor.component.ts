@@ -8,13 +8,8 @@ import {
   ViewContainerRef,
   inject,
 } from '@angular/core';
-import { baseKeymap } from 'prosemirror-commands';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
-import { history } from 'prosemirror-history';
-import { keymap } from 'prosemirror-keymap';
-import { buildBasicKeymap } from '../prose-mirror/plugins/keymaps/basic-keymaps';
-import { fixTables } from 'prosemirror-tables';
 import { ProseMirrorModule } from 'src/app/components/prose-mirror/prose-mirror.module';
 import { ProseMirrorComponent } from 'src/app/components/prose-mirror/prose-mirror.component';
 import { EditorProps } from 'prosemirror-view';
@@ -32,9 +27,11 @@ import {
   HardBreak,
   Image,
   Link,
-  EM,
+  Italic,
   Strong,
   Code,
+  History,
+  BasicKeymap,
 } from '../prose-mirror/extensions/builtin';
 
 @Component({
@@ -70,19 +67,13 @@ export class ProseEditorComponent implements OnInit {
       HardBreak(),
       Image(),
       Link(),
-      EM(),
+      Italic(),
       Strong(),
       Code(),
+      BasicKeymap(),
+      History(),
     ],
-    nativePlugins: (schema) => [
-      keymap({
-        ...buildBasicKeymap(schema),
-      }),
-      keymap(baseKeymap),
-      dropCursor(),
-      gapCursor(),
-      history(),
-    ],
+    nativePlugins: () => [dropCursor(), gapCursor()],
   }).configure();
 
   public attributes: EditorProps['attributes'] = {
@@ -90,9 +81,8 @@ export class ProseEditorComponent implements OnInit {
   };
 
   public constructor() {
-    const fix = fixTables(this.state);
-    if (fix) this.state = this.state.apply(fix.setMeta('addToHistory', false));
-
+    // const fix = fixTables(this.state);
+    // if (fix) this.state = this.state.apply(fix.setMeta('addToHistory', false));
     // this.view = new EditorView(this.editor.nativeElement, {
     //   attributes: {
     //     spellcheck: 'false',
@@ -109,44 +99,11 @@ export class ProseEditorComponent implements OnInit {
     //     this.view.updateState(newState);
     //   },
     // });
-
     // document.execCommand('enableObjectResizing', false, 'false');
     // document.execCommand('enableInlineTableEditing', false, 'false');
   }
 
-  // public heading(level: number): void {
-  //   const { state, dispatch } = this.proseMirror.editorView;
-  //   const { $from, $to } = state.selection;
-  //   const from = $from.pos;
-  //   const to = $to.pos;
-  //   dispatch(
-  //     state.tr
-  //       .setBlockType(from, to, this.schema.nodes['heading'], { level })
-  //       .scrollIntoView(),
-  //   );
-  // }
-
-  // public addHorizontalLine(): void {
-  //   const { state, dispatch } = this.proseMirror.editorView;
-  //   const node = this.schema.nodes['horizontal_rule'];
-  //   dispatch(state.tr.replaceSelectionWith(node.create()));
-  //   this.proseMirror.editorView.focus();
-  // }
-
-  // public toggleBold(): void {
-  //   const { state, dispatch } = this.proseMirror.editorView;
-  //   toggleMark(this.schema.marks['strong'])(state, dispatch);
-  //   this.proseMirror.editorView.focus();
-  // }
-
   public ngOnInit(): void {
     return;
-    // // console.log(this);
-    // const comp = createComponent(ParagraphComponent, {
-    //   environmentInjector: this.environmentInjector,
-    //   // hostElement: this.elementRef.nativeElement,
-    // });
-    // this.elementRef.nativeElement.append(comp.location.nativeElement);
-    // this.applicationRef.attachView(comp.hostView);
   }
 }

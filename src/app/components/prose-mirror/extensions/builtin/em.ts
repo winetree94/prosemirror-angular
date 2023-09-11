@@ -22,7 +22,7 @@ const em: Record<string, MarkSpec> = {
   },
 };
 
-export const EM = (): PMPluginsFactory => () => {
+export const Italic = (): PMPluginsFactory => () => {
   return {
     nodes: {},
     marks: {

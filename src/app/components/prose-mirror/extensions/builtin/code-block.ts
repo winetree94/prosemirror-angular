@@ -1,7 +1,8 @@
-import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
+import { DOMOutputSpec, NodeSpec, NodeType } from 'prosemirror-model';
 import { PMPluginsFactory } from '../state';
-import { inputRules } from 'prosemirror-inputrules';
-import { codeBlockRule } from 'src/app/components/prose-mirror/plugins/input-rules/basic-input-rules';
+import { inputRules, textblockTypeInputRule } from 'prosemirror-inputrules';
+import { keymap } from 'prosemirror-keymap';
+import { setBlockType } from 'prosemirror-commands';
 
 const preDOM: DOMOutputSpec = ['pre', ['code', 0]];
 const code_block: Record<string, NodeSpec> = {
@@ -18,6 +19,12 @@ const code_block: Record<string, NodeSpec> = {
   },
 };
 
+/// Given a code block node type, returns an input rule that turns a
+/// textblock starting with three backticks into a code block.
+export function codeBlockRule(nodeType: NodeType) {
+  return textblockTypeInputRule(/^```$/, nodeType);
+}
+
 export const CodeBlock = (): PMPluginsFactory => () => {
   return {
     nodes: {
@@ -27,6 +34,9 @@ export const CodeBlock = (): PMPluginsFactory => () => {
     plugins: (schema) => [
       inputRules({
         rules: [codeBlockRule(schema.nodes['code_block'])],
+      }),
+      keymap({
+        'Shift-Ctrl-\\': setBlockType(schema.nodes['code_block']),
       }),
     ],
   };

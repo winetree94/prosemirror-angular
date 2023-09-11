@@ -1,3 +1,4 @@
+import { keymap } from 'prosemirror-keymap';
 import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 import { PMPluginsFactory } from 'src/app/components/prose-mirror/extensions/state';
 
@@ -18,6 +19,21 @@ export const Separator = (): PMPluginsFactory => () => {
       ...horizontal_rule,
     },
     marks: {},
-    plugins: () => [],
+    plugins: () => [
+      keymap({
+        'Mod-_': (state, dispatch) => {
+          if (dispatch) {
+            dispatch(
+              state.tr
+                .replaceSelectionWith(
+                  state.schema.nodes['horizontal_rule'].create(),
+                )
+                .scrollIntoView(),
+            );
+          }
+          return true;
+        },
+      }),
+    ],
   };
 };
