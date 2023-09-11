@@ -4,7 +4,6 @@ import { tableNodes } from 'prosemirror-tables';
 import OrderedMap from 'orderedmap';
 import { addListNodes } from 'prosemirror-schema-list';
 
-
 const doc: NodeSpecs = {
   doc: {
     content: 'block+',

@@ -12,34 +12,30 @@ import { baseKeymap } from 'prosemirror-commands';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { history } from 'prosemirror-history';
-import {
-  ellipsis,
-  emDash,
-  inputRules,
-  smartQuotes,
-} from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { Schema } from 'prosemirror-model';
-import { EditorState, Plugin } from 'prosemirror-state';
-import {
-  blockQuoteRule,
-  bulletListRule,
-  codeBlockRule,
-  headingRule,
-  orderedListRule,
-} from '../prose-mirror/plugins/input-rules/basic-input-rules';
 import { buildBasicKeymap } from '../prose-mirror/plugins/keymaps/basic-keymaps';
-import { fixTables, goToNextCell, tableEditing } from 'prosemirror-tables';
+import { fixTables } from 'prosemirror-tables';
 import { ProseMirrorModule } from 'src/app/components/prose-mirror/prose-mirror.module';
 import { ProseMirrorComponent } from 'src/app/components/prose-mirror/prose-mirror.component';
 import { EditorProps } from 'prosemirror-view';
-import { buildMenuItems } from 'src/app/components/prose-mirror/plugins/menu-bar/basic-menu-items';
-import { menuBar } from 'src/app/components/prose-mirror/plugins/menu-bar/menubar';
 import { ProseEditorMenubarComponent } from 'src/app/components/prose-editor/menubar/prose-editor-menubar.component';
-import { BASE_NODES } from 'src/app/components/prose-mirror/schema/nodes/specs';
-import { BASE_MARKS } from './../prose-mirror/schema/marks/marks';
-import OrderedMap from 'orderedmap';
-import codemark from 'prosemirror-codemark';
+import { PMEditor } from '../prose-mirror/extensions/state';
+import {
+  BlockQuote,
+  Document,
+  Separator,
+  Heading,
+  Paragraph,
+  CodeBlock,
+  Table,
+  Text,
+  HardBreak,
+  Image,
+  Link,
+  EM,
+  Strong,
+  Code,
+} from '../prose-mirror/extensions/builtin';
 
 @Component({
   selector: 'ng-prose-editor',
@@ -59,80 +55,35 @@ export class ProseEditorComponent implements OnInit {
   @ViewChild('proseMirror', { static: true })
   public proseMirror!: ProseMirrorComponent;
 
-  public readonly schema = new Schema({
-    nodes: OrderedMap.from({
-      ...BASE_NODES.DOC,
-      ...BASE_NODES.TEXT,
-      ...BASE_NODES.PARAGRAPH_WITH_LIST,
-      ...BASE_NODES.BLOCKQUOTE,
-      ...BASE_NODES.HORIZONTAL_RULE,
-      ...BASE_NODES.HEADING,
-      ...BASE_NODES.CODE_BLOCK,
-      ...BASE_NODES.TABLES,
-    }),
-    marks: OrderedMap.from({
-      ...BASE_MARKS.LINK,
-      ...BASE_MARKS.CODE,
-      ...BASE_MARKS.EM,
-      ...BASE_MARKS.STRONG,
-    }),
-  });
-
-  public state = EditorState.create({
-    schema: this.schema,
-    plugins: [
-      ...codemark({ markType: this.schema.marks['code'] }),
-      // table
-      // columnResizing(),
-      tableEditing(),
-      // input 입력 시 동작할 것들
-      inputRules({
-        rules: [
-          ...smartQuotes,
-          ellipsis,
-          emDash,
-          blockQuoteRule(this.schema.nodes['blockquote']),
-          orderedListRule(this.schema.nodes['ordered_list']),
-          bulletListRule(this.schema.nodes['bullet_list']),
-          codeBlockRule(this.schema.nodes['code_block']),
-          headingRule(this.schema.nodes['heading'], 6),
-        ],
+  public state = new PMEditor({
+    extensions: [
+      Document(),
+      Paragraph({ addListNodes: true }),
+      Text(),
+      BlockQuote(),
+      Separator(),
+      Heading({
+        level: 6,
       }),
+      CodeBlock(),
+      Table(),
+      HardBreak(),
+      Image(),
+      Link(),
+      EM(),
+      Strong(),
+      Code(),
+    ],
+    nativePlugins: (schema) => [
       keymap({
-        Tab: goToNextCell(1),
-        'Shift-Tab': goToNextCell(-1),
-      }),
-      // 키맵 설정
-      keymap({
-        ...buildBasicKeymap(this.schema),
+        ...buildBasicKeymap(schema),
       }),
       keymap(baseKeymap),
       dropCursor(),
       gapCursor(),
-      menuBar({
-        floating: false,
-        content: buildMenuItems(this.schema).fullMenu,
-      }),
       history(),
-      new Plugin({
-        props: {
-          attributes: { class: 'ProseMirror-Root-Class' },
-        },
-      }),
-      new Plugin({
-        view: (editor) => {
-          // console.log(editor);
-          // console.log(this.menubarContentRoot);
-          return {
-            update: (view, state) => {
-              // console.log('update', view, state);
-              // console.log(view);
-            },
-          };
-        },
-      }),
     ],
-  });
+  }).configure();
 
   public attributes: EditorProps['attributes'] = {
     spellcheck: 'false',

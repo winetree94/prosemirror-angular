@@ -36,6 +36,9 @@ export class ProseMirrorComponent implements OnInit {
   @Input()
   public dispatchTransaction: DirectEditorProps['dispatchTransaction'];
 
+  @Input()
+  public ngPlugins: Plugin[] = [];
+
   public ngOnInit(): void {
     this.editorView = new EditorView(this.elementRef.nativeElement, {
       state: this.state,
