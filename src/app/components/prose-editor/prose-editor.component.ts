@@ -101,12 +101,16 @@ export class ProseEditorComponent implements OnInit {
           headingRule(this.schema.nodes['heading'], 6),
         ],
       }),
-      // 키맵 설정
       keymap({
         Tab: goToNextCell(1),
         'Shift-Tab': goToNextCell(-1),
-        ...baseKeymap,
+      }),
+      // 키맵 설정
+      keymap({
         ...buildBasicKeymap(this.schema),
+      }),
+      keymap({
+        ...baseKeymap,
       }),
       dropCursor(),
       gapCursor(),
