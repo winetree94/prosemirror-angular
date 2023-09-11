@@ -13,7 +13,12 @@ import { baseKeymap, toggleMark } from 'prosemirror-commands';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { history } from 'prosemirror-history';
-import { ellipsis, inputRules, smartQuotes } from 'prosemirror-inputrules';
+import {
+  ellipsis,
+  emDash,
+  inputRules,
+  smartQuotes,
+} from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { Schema } from 'prosemirror-model';
 import { addListNodes } from 'prosemirror-schema-list';
@@ -23,11 +28,9 @@ import {
   bulletListRule,
   codeBlockRule,
   headingRule,
-  horizontalSeparatorRule,
   orderedListRule,
 } from '../prose-mirror/plugins/input-rules/basic-input-rules';
 import { buildBasicKeymap } from '../prose-mirror/plugins/keymaps/basic-keymaps';
-import { basicSchema } from '../prose-mirror/schema/basic';
 import {
   columnResizing,
   fixTables,
@@ -41,6 +44,9 @@ import { buildMenuItems } from 'src/app/components/prose-mirror/plugins/menu-bar
 import { menuBar } from 'src/app/components/prose-mirror/plugins/menu-bar/menubar';
 import { ParagraphComponent } from 'src/app/components/prose-mirror/node-views/paragraph/paragraph.component';
 import { ProseEditorMenubarComponent } from 'src/app/components/prose-editor/menubar/prose-editor-menubar.component';
+import { BASIC_NODE_SPECS } from 'src/app/components/prose-mirror/schema/nodes/specs';
+import OrderedMap from 'orderedmap';
+import { BASIC_MARK_SPECS } from 'src/app/components/prose-mirror/schema/marks/marks';
 
 @Component({
   selector: 'ng-prose-editor',
@@ -62,11 +68,11 @@ export class ProseEditorComponent implements OnInit {
 
   public schema = new Schema({
     nodes: addListNodes(
-      basicSchema.spec.nodes,
+      OrderedMap.from(BASIC_NODE_SPECS),
       'paragraph (ordered_list | bullet_list)*',
       'block',
     ),
-    marks: basicSchema.spec.marks,
+    marks: OrderedMap.from(BASIC_MARK_SPECS),
   });
 
   public state = EditorState.create({
@@ -80,13 +86,12 @@ export class ProseEditorComponent implements OnInit {
         rules: [
           ...smartQuotes,
           ellipsis,
-          // emDash,
+          emDash,
           blockQuoteRule(this.schema.nodes['blockquote']),
           orderedListRule(this.schema.nodes['ordered_list']),
           bulletListRule(this.schema.nodes['bullet_list']),
           codeBlockRule(this.schema.nodes['code_block']),
           headingRule(this.schema.nodes['heading'], 6),
-          horizontalSeparatorRule(this.schema.nodes['horizontal_rule']),
         ],
       }),
       // 키맵 설정
@@ -106,6 +111,18 @@ export class ProseEditorComponent implements OnInit {
       new Plugin({
         props: {
           attributes: { class: 'ProseMirror-Root-Class' },
+        },
+      }),
+      new Plugin({
+        view: (editor) => {
+          console.log(editor);
+          console.log(this.menubarContentRoot);
+          return {
+            update: (view, state) => {
+              console.log('update', view, state);
+              // console.log(view);
+            },
+          };
         },
       }),
     ],
@@ -136,37 +153,37 @@ export class ProseEditorComponent implements OnInit {
     //   },
     // });
 
-    document.execCommand('enableObjectResizing', false, 'false');
-    document.execCommand('enableInlineTableEditing', false, 'false');
+    // document.execCommand('enableObjectResizing', false, 'false');
+    // document.execCommand('enableInlineTableEditing', false, 'false');
   }
 
-  public heading(level: number): void {
-    const { state, dispatch } = this.proseMirror.editorView;
-    const { $from, $to } = state.selection;
-    const from = $from.pos;
-    const to = $to.pos;
-    dispatch(
-      state.tr
-        .setBlockType(from, to, this.schema.nodes['heading'], { level })
-        .scrollIntoView(),
-    );
-  }
+  // public heading(level: number): void {
+  //   const { state, dispatch } = this.proseMirror.editorView;
+  //   const { $from, $to } = state.selection;
+  //   const from = $from.pos;
+  //   const to = $to.pos;
+  //   dispatch(
+  //     state.tr
+  //       .setBlockType(from, to, this.schema.nodes['heading'], { level })
+  //       .scrollIntoView(),
+  //   );
+  // }
 
-  public addHorizontalLine(): void {
-    const { state, dispatch } = this.proseMirror.editorView;
-    const node = this.schema.nodes['horizontal_rule'];
-    dispatch(state.tr.replaceSelectionWith(node.create()));
-    this.proseMirror.editorView.focus();
-  }
+  // public addHorizontalLine(): void {
+  //   const { state, dispatch } = this.proseMirror.editorView;
+  //   const node = this.schema.nodes['horizontal_rule'];
+  //   dispatch(state.tr.replaceSelectionWith(node.create()));
+  //   this.proseMirror.editorView.focus();
+  // }
 
-  public toggleBold(): void {
-    const { state, dispatch } = this.proseMirror.editorView;
-    toggleMark(this.schema.marks['strong'])(state, dispatch);
-    this.proseMirror.editorView.focus();
-  }
+  // public toggleBold(): void {
+  //   const { state, dispatch } = this.proseMirror.editorView;
+  //   toggleMark(this.schema.marks['strong'])(state, dispatch);
+  //   this.proseMirror.editorView.focus();
+  // }
 
   public ngOnInit(): void {
-    console.log(this);
+    // console.log(this);
     const comp = createComponent(ParagraphComponent, {
       environmentInjector: this.environmentInjector,
       // hostElement: this.elementRef.nativeElement,

@@ -42,6 +42,7 @@ export class ProseMirrorComponent implements OnInit {
       attributes: this.attributes,
       nodeViews: this.nodeViews,
       plugins: this.plugins,
+      dispatchTransaction: this.dispatchTransaction,
     });
   }
 }
