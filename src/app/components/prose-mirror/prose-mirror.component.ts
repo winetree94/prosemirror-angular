@@ -2,14 +2,18 @@
 import {
   Component,
   ElementRef,
-  EnvironmentInjector,
-  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
+  forwardRef,
   inject,
 } from '@angular/core';
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  NgControl,
+} from '@angular/forms';
+import { Node } from 'prosemirror-model';
 import { EditorState, Plugin } from 'prosemirror-state';
 import { DirectEditorProps, EditorView } from 'prosemirror-view';
 
@@ -18,10 +22,23 @@ import { DirectEditorProps, EditorView } from 'prosemirror-view';
   exportAs: 'ngProseMirror',
   template: `<ng-content></ng-content>`,
   standalone: true,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => ProseMirrorComponent),
+      multi: true,
+    },
+  ],
 })
-export class ProseMirrorComponent implements OnInit, OnDestroy {
+export class ProseMirrorComponent
+  implements ControlValueAccessor, OnInit, OnDestroy
+{
+  public readonly ngControl = inject(NgControl, { optional: true, self: true });
   public readonly elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
   public editorView!: EditorView;
+
+  private _onChange: ((value: string) => void) | undefined;
+  private _onTouched: (() => void) | undefined;
 
   @Input()
   public state!: EditorState;
@@ -50,9 +67,41 @@ export class ProseMirrorComponent implements OnInit, OnDestroy {
       attributes: this.attributes,
       nodeViews: this.nodeViews,
       plugins: this.plugins,
-      dispatchTransaction: this.dispatchTransaction,
+      dispatchTransaction: (tr) => {
+        this.dispatchTransaction?.(tr);
+        this.editorView.updateState(this.editorView.state.apply(tr));
+        if (this._onChange) {
+          const json = JSON.stringify(tr.doc.toJSON(), null, 4);
+          this._onChange(json);
+        }
+      },
       handleKeyDown: this.handleKeydown,
     });
+  }
+
+  public writeValue(value: string): void {
+    if (!this.editorView) {
+      return;
+    }
+    const node = Node.fromJSON(this.editorView.state.schema, JSON.parse(value));
+    const state = EditorState.create({
+      doc: node,
+      schema: this.editorView.state.schema,
+      plugins: this.editorView.state.plugins,
+    });
+    this.editorView.updateState(state);
+  }
+
+  public registerOnChange(fn: typeof this._onChange): void {
+    this._onChange = fn;
+  }
+
+  public registerOnTouched(fn: typeof this._onTouched): void {
+    this._onTouched = fn;
+  }
+
+  public setDisabledState(isDisabled: boolean): void {
+    console.log(isDisabled);
   }
 
   public ngOnDestroy(): void {

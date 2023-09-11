@@ -5,14 +5,13 @@ import {
   OnInit,
   ViewChild,
   ViewContainerRef,
+  forwardRef,
   inject,
 } from '@angular/core';
-import { dropCursor } from 'prosemirror-dropcursor';
-import { gapCursor } from 'prosemirror-gapcursor';
-import { ProseMirrorModule } from 'src/app/components/prose-mirror/prose-mirror.module';
-import { ProseMirrorComponent } from 'src/app/components/prose-mirror/prose-mirror.component';
 import { EditorProps, EditorView } from 'prosemirror-view';
-import { ProseEditorMenubarComponent } from 'src/app/components/prose-editor/menubar/prose-editor-menubar.component';
+import { ProseMirrorModule } from '../prose-mirror/prose-mirror.module';
+import { ProseMirrorComponent } from '..//prose-mirror/prose-mirror.component';
+import { ProseEditorMenubarComponent } from './menubar/prose-editor-menubar.component';
 import { PMEditor } from '../prose-mirror/extensions/state';
 import {
   BlockQuote,
@@ -36,9 +35,11 @@ import {
   ResetOnEmpty,
 } from '../prose-mirror/extensions/builtin';
 import { EditorState } from 'prosemirror-state';
-import { NgMenubarView } from 'src/app/components/prose-editor/menubar/menubar';
+import { NgMenubarView } from './menubar/menubar';
 import { menuBar } from 'src/app/components/prose-mirror/plugins/menu-bar/menubar';
 import { buildMenuItems } from 'src/app/components/prose-mirror/plugins/menu-bar/basic-menu-items';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Node } from 'prosemirror-model';
 
 @Component({
   selector: 'ng-prose-editor',
@@ -46,8 +47,15 @@ import { buildMenuItems } from 'src/app/components/prose-mirror/plugins/menu-bar
   styleUrls: ['./prose-editor.component.scss'],
   standalone: true,
   imports: [ProseMirrorModule, ProseEditorMenubarComponent],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => ProseEditorComponent),
+      multi: true,
+    },
+  ],
 })
-export class ProseEditorComponent implements OnInit {
+export class ProseEditorComponent implements ControlValueAccessor, OnInit {
   private readonly applicationRef = inject(ApplicationRef);
   private readonly environmentInjector = inject(EnvironmentInjector);
 
@@ -63,8 +71,8 @@ export class ProseEditorComponent implements OnInit {
   public state: EditorState = new PMEditor({
     extensions: [
       Document(),
-      Paragraph({ addListNodes: true }),
       Text(),
+      Paragraph({ addListNodes: true }),
       BlockQuote(),
       Separator(),
       Heading({
@@ -89,13 +97,13 @@ export class ProseEditorComponent implements OnInit {
       History(),
     ],
     nativePlugins: (schema) => [
-      dropCursor(),
-      gapCursor(),
       menuBar({
         content: buildMenuItems(schema).fullMenu,
       }),
     ],
   }).configure();
+
+  public constructor() {}
 
   public attributes: EditorProps['attributes'] = {
     spellcheck: 'false',
@@ -107,5 +115,25 @@ export class ProseEditorComponent implements OnInit {
 
   public ngOnInit(): void {
     return;
+  }
+
+  public writeValue(value: string): void {
+    if (!this.proseMirror.editorView) {
+      this.state.doc = Node.fromJSON(this.state.schema, JSON.parse(value));
+    } else {
+      this.proseMirror.writeValue(value);
+    }
+  }
+
+  public registerOnChange(fn: (value: string) => void): void {
+    this.proseMirror.registerOnChange(fn);
+  }
+
+  public registerOnTouched(fn: () => void): void {
+    this.proseMirror.registerOnTouched(fn);
+  }
+
+  public setDisabledState(isDisabled: boolean): void {
+    this.proseMirror.setDisabledState(isDisabled);
   }
 }

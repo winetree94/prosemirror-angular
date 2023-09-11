@@ -1,5 +1,7 @@
 import { EditorState, EditorStateConfig, Plugin } from 'prosemirror-state';
 import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
+import { dropCursor } from 'prosemirror-dropcursor';
+import { gapCursor } from 'prosemirror-gapcursor';
 
 export type PMPlugin = {
   nodes: Record<string, NodeSpec>;
@@ -43,7 +45,7 @@ export class PMEditor {
       (acc, extension) => {
         return [...acc, ...extension().plugins(schema)];
       },
-      [],
+      [dropCursor(), gapCursor()],
     );
 
     const nativePlugins = this.configs.nativePlugins

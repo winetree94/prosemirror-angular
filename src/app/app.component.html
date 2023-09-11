@@ -2,4 +2,9 @@
   <button (click)="enable = !enable">toggle editor</button>
 </div>
 
-<ng-prose-editor *ngIf="enable" class="editor"> </ng-prose-editor>
+<form [formGroup]="formGroup">
+  <ng-prose-editor *ngIf="enable" class="editor" formControlName="content">
+  </ng-prose-editor>
+</form>
+
+<div *ngIf="values$ | async as value" [innerHTML]="value"></div>

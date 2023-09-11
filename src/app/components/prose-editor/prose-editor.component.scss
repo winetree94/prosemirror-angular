@@ -12,10 +12,10 @@
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  overflow: auto;
   height: inherit;
   width: inherit;
   height: 500px;
+  min-height: 0;
 
   .ProseMirror {
     flex: 1 1 auto;
