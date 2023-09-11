@@ -65,6 +65,7 @@ export class ProseMirrorComponent
       dispatchTransaction: (tr) => {
         this.dispatchTransaction?.(tr);
         const nextState = this.editorView.state.apply(tr);
+        this.state = nextState;
         this.editorView.updateState(nextState);
         this._onChange?.(nextState);
         this._onTouched?.();
@@ -79,10 +80,9 @@ export class ProseMirrorComponent
   }
 
   public writeValue(state: EditorState): void {
+    this.state = state;
     if (this.editorView) {
       this.editorView.updateState(state);
-    } else {
-      this.state = state;
     }
   }
 
