@@ -31,4 +31,12 @@ export class AppComponent {
   public updateValue(): void {
     this.formGroup.controls.content.patchValue(JSON.stringify(data2));
   }
+
+  public toggleDisabled(): void {
+    if (this.formGroup.controls.content.disabled) {
+      this.formGroup.controls.content.enable();
+    } else {
+      this.formGroup.controls.content.disable();
+    }
+  }
 }

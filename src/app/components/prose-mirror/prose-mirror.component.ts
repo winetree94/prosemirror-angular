@@ -8,12 +8,7 @@ import {
   forwardRef,
   inject,
 } from '@angular/core';
-import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-  NgControl,
-} from '@angular/forms';
-import { Node } from 'prosemirror-model';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { EditorState, Plugin } from 'prosemirror-state';
 import { DirectEditorProps, EditorView } from 'prosemirror-view';
 
@@ -21,6 +16,7 @@ import { DirectEditorProps, EditorView } from 'prosemirror-view';
   selector: 'div[ngProseMirror]',
   exportAs: 'ngProseMirror',
   template: `<ng-content></ng-content>`,
+  styleUrls: ['./prose-mirror.component.scss'],
   standalone: true,
   providers: [
     {
@@ -33,18 +29,15 @@ import { DirectEditorProps, EditorView } from 'prosemirror-view';
 export class ProseMirrorComponent
   implements ControlValueAccessor, OnInit, OnDestroy
 {
-  public readonly ngControl = inject(NgControl, { optional: true, self: true });
   public readonly elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
   public editorView!: EditorView;
 
-  private _onChange: ((value: string) => void) | undefined;
+  private _disabled = false;
+  private _onChange: ((value: EditorState) => void) | undefined;
   private _onTouched: (() => void) | undefined;
 
-  @Input()
+  @Input({ required: true })
   public state!: EditorState;
-
-  @Input()
-  public plugins: Plugin[] = [];
 
   @Input()
   public attributes: DirectEditorProps['attributes'] = {};
@@ -62,34 +55,31 @@ export class ProseMirrorComponent
   public handleKeydown: DirectEditorProps['handleKeyDown'];
 
   public ngOnInit(): void {
+    if (!this.state) {
+      throw new Error('No state provided');
+    }
     this.editorView = new EditorView(this.elementRef.nativeElement, {
       state: this.state,
       attributes: this.attributes,
       nodeViews: this.nodeViews,
-      plugins: this.plugins,
       dispatchTransaction: (tr) => {
         this.dispatchTransaction?.(tr);
-        this.editorView.updateState(this.editorView.state.apply(tr));
-        if (this._onChange) {
-          const json = JSON.stringify(tr.doc.toJSON(), null, 4);
-          this._onChange(json);
-        }
+        const nextState = this.editorView.state.apply(tr);
+        this.editorView.updateState(nextState);
+        this._onChange?.(nextState);
+        this._onTouched?.();
       },
       handleKeyDown: this.handleKeydown,
+      editable: () => !this._disabled,
     });
   }
 
-  public writeValue(value: string): void {
-    if (!this.editorView) {
-      return;
+  public writeValue(state: EditorState): void {
+    if (this.editorView) {
+      this.editorView.updateState(state);
+    } else {
+      this.state = state;
     }
-    const node = Node.fromJSON(this.editorView.state.schema, JSON.parse(value));
-    const state = EditorState.create({
-      doc: node,
-      schema: this.editorView.state.schema,
-      plugins: this.editorView.state.plugins,
-    });
-    this.editorView.updateState(state);
   }
 
   public registerOnChange(fn: typeof this._onChange): void {
@@ -101,7 +91,11 @@ export class ProseMirrorComponent
   }
 
   public setDisabledState(isDisabled: boolean): void {
-    console.log(isDisabled);
+    this._disabled = isDisabled;
+    // for internal change detection
+    if (this.editorView) {
+      this.editorView.updateState(this.state);
+    }
   }
 
   public ngOnDestroy(): void {

@@ -118,15 +118,25 @@ export class ProseEditorComponent implements ControlValueAccessor, OnInit {
   }
 
   public writeValue(value: string): void {
+    const node = Node.fromJSON(this.state.schema, JSON.parse(value));
+    const state = EditorState.create({
+      doc: node,
+      schema: this.state.schema,
+      plugins: this.state.plugins,
+      selection: this.state.selection,
+      storedMarks: this.state.storedMarks,
+    });
     if (!this.proseMirror.editorView) {
-      this.state.doc = Node.fromJSON(this.state.schema, JSON.parse(value));
+      this.state = state;
     } else {
-      this.proseMirror.writeValue(value);
+      this.proseMirror.writeValue(state);
     }
   }
 
   public registerOnChange(fn: (value: string) => void): void {
-    this.proseMirror.registerOnChange(fn);
+    this.proseMirror.registerOnChange((state) =>
+      fn(JSON.stringify(state.doc.toJSON())),
+    );
   }
 
   public registerOnTouched(fn: () => void): void {
