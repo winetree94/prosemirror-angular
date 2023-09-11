@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProseEditorComponent } from 'src/app/components/prose-editor/prose-editor.component';
 import { GlobalService } from 'src/app/global.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { data } from 'src/app/data';
+import { data, data2 } from 'src/app/data';
 import { map, startWith } from 'rxjs';
 
 @Component({
@@ -27,4 +27,8 @@ export class AppComponent {
     startWith(this.formGroup.controls.content.value),
     map((value) => JSON.stringify(JSON.parse(value), null, 4)),
   );
+
+  public updateValue(): void {
+    this.formGroup.controls.content.patchValue(JSON.stringify(data2));
+  }
 }
