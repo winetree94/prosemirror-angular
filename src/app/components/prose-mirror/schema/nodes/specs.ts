@@ -4,11 +4,6 @@ import { tableNodes } from 'prosemirror-tables';
 import OrderedMap from 'orderedmap';
 import { addListNodes } from 'prosemirror-schema-list';
 
-const pDOM: DOMOutputSpec = ['p', { class: 'ng-prosemirror-paragraph' }, 0];
-const blockquoteDOM: DOMOutputSpec = ['blockquote', 0];
-const hrDOM: DOMOutputSpec = ['hr'];
-const preDOM: DOMOutputSpec = ['pre', ['code', 0]];
-const brDOM: DOMOutputSpec = ['br'];
 
 const doc: NodeSpecs = {
   doc: {
@@ -16,6 +11,7 @@ const doc: NodeSpecs = {
   },
 };
 
+const pDOM: DOMOutputSpec = ['p', { class: '' }, 0];
 const paragraph: NodeSpecs = {
   paragraph: {
     content: 'inline*',
@@ -33,6 +29,7 @@ const paragraphWithList = addListNodes(
   'block',
 ).toObject();
 
+const blockquoteDOM: DOMOutputSpec = ['blockquote', 0];
 const blockquote: NodeSpecs = {
   blockquote: {
     content: 'block+',
@@ -45,6 +42,7 @@ const blockquote: NodeSpecs = {
   },
 };
 
+const hrDOM: DOMOutputSpec = ['hr'];
 const horizontal_rule: NodeSpecs = {
   horizontal_rule: {
     group: 'block',
@@ -75,6 +73,7 @@ const heading: NodeSpecs = {
   },
 };
 
+const preDOM: DOMOutputSpec = ['pre', ['code', 0]];
 const code_block: NodeSpecs = {
   code_block: {
     content: 'text*',
@@ -125,6 +124,7 @@ const image: NodeSpecs = {
   },
 };
 
+const brDOM: DOMOutputSpec = ['br'];
 const hard_break: NodeSpecs = {
   hard_break: {
     inline: true,

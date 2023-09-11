@@ -105,8 +105,8 @@ export class ProseEditorComponent implements OnInit {
       keymap({
         Tab: goToNextCell(1),
         'Shift-Tab': goToNextCell(-1),
-        ...buildBasicKeymap(this.schema),
         ...baseKeymap,
+        ...buildBasicKeymap(this.schema),
       }),
       dropCursor(),
       gapCursor(),
