@@ -12,6 +12,7 @@ export * from './link';
 export * from './em';
 export * from './strong';
 export * from './code';
+export * from './strikethrough';
 export * from './history';
 export * from './keymap';
 export * from './angular';

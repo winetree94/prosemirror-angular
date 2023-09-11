@@ -2,12 +2,17 @@ import {
   ApplicationRef,
   ComponentRef,
   EnvironmentInjector,
-  NgZone,
+  InjectionToken,
+  Injector,
   createComponent,
 } from '@angular/core';
 import { EditorState, PluginView } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { ProseEditorMenubarComponent } from 'src/app/components/prose-editor/menubar/prose-editor-menubar.component';
+
+export const ProseMirrorEditorView = new InjectionToken<EditorView>(
+  'prosemirror-editor-view',
+);
 
 export class NgMenubarView implements PluginView {
   private componentRef: ComponentRef<ProseEditorMenubarComponent>;
@@ -16,10 +21,17 @@ export class NgMenubarView implements PluginView {
     private readonly editorView: EditorView,
     private readonly applicationRef: ApplicationRef,
     private readonly environmentInjector: EnvironmentInjector,
-    private readonly zone: NgZone,
   ) {
     this.componentRef = createComponent(ProseEditorMenubarComponent, {
       environmentInjector: this.environmentInjector,
+      elementInjector: Injector.create({
+        providers: [
+          {
+            provide: ProseMirrorEditorView,
+            useValue: this.editorView,
+          },
+        ],
+      }),
     });
     this.applicationRef.attachView(this.componentRef.hostView);
     this.editorView.dom.parentNode?.insertBefore(

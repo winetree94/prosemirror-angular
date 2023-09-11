@@ -18,7 +18,6 @@ import { DirectEditorProps, EditorView } from 'prosemirror-view';
   standalone: true,
 })
 export class ProseMirrorComponent implements OnInit, OnDestroy {
-  private readonly _environmentInjector = inject(EnvironmentInjector);
   public readonly elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
   public editorView!: EditorView;
 
