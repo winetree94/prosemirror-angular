@@ -4,6 +4,7 @@ import {
   ElementRef,
   EnvironmentInjector,
   Input,
+  OnDestroy,
   OnInit,
   inject,
 } from '@angular/core';
@@ -16,7 +17,7 @@ import { DirectEditorProps, EditorView } from 'prosemirror-view';
   template: `<ng-content></ng-content>`,
   standalone: true,
 })
-export class ProseMirrorComponent implements OnInit {
+export class ProseMirrorComponent implements OnInit, OnDestroy {
   private readonly _environmentInjector = inject(EnvironmentInjector);
   public readonly elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
   public editorView!: EditorView;
@@ -47,5 +48,9 @@ export class ProseMirrorComponent implements OnInit {
       plugins: this.plugins,
       dispatchTransaction: this.dispatchTransaction,
     });
+  }
+
+  public ngOnDestroy(): void {
+    this.editorView.destroy();
   }
 }

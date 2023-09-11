@@ -10,6 +10,7 @@
 
 ::ng-deep.editor-root {
   display: flex;
+  flex-direction: column;
   flex: 1 1 auto;
   overflow: auto;
   height: inherit;

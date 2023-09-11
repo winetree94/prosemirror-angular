@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   EnvironmentInjector,
+  NgZone,
   OnInit,
   ViewChild,
   ViewContainerRef,
@@ -32,7 +33,10 @@ import {
   Code,
   History,
   BasicKeymap,
+  AngularAdapter,
 } from '../prose-mirror/extensions/builtin';
+import { EditorState } from 'prosemirror-state';
+import { NgMenubarView } from 'src/app/components/prose-editor/menubar/menubar';
 
 @Component({
   selector: 'ng-prose-editor',
@@ -44,66 +48,54 @@ import {
 export class ProseEditorComponent implements OnInit {
   private readonly applicationRef = inject(ApplicationRef);
   private readonly elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
+  private readonly ngZone = inject(NgZone);
   private readonly environmentInjector = inject(EnvironmentInjector);
 
   @ViewChild('menubarContentRoot', { static: true, read: ViewContainerRef })
   public menubarContentRoot!: ViewContainerRef;
 
+  @ViewChild('menubar', { static: true })
+  public menubar!: ProseEditorMenubarComponent;
+
   @ViewChild('proseMirror', { static: true })
   public proseMirror!: ProseMirrorComponent;
 
-  public state = new PMEditor({
-    extensions: [
-      Document(),
-      Paragraph({ addListNodes: true }),
-      Text(),
-      BlockQuote(),
-      Separator(),
-      Heading({
-        level: 6,
-      }),
-      CodeBlock(),
-      Table(),
-      HardBreak(),
-      Image(),
-      Link(),
-      Italic(),
-      Strong(),
-      Code(),
-      BasicKeymap(),
-      History(),
-    ],
-    nativePlugins: () => [dropCursor(), gapCursor()],
-  }).configure();
+  public state!: EditorState;
 
   public attributes: EditorProps['attributes'] = {
     spellcheck: 'false',
   };
 
-  public constructor() {
-    // const fix = fixTables(this.state);
-    // if (fix) this.state = this.state.apply(fix.setMeta('addToHistory', false));
-    // this.view = new EditorView(this.editor.nativeElement, {
-    //   attributes: {
-    //     spellcheck: 'false',
-    //   },
-    //   state: state,
-    //   nodeViews: {
-    //     // table: (node, view, getPos) => {
-    //     //   console.log(node, view, getPos);
-    //     //   return new TableView(node, 100);
-    //     // },
-    //   },
-    //   dispatchTransaction: (transaction) => {
-    //     const newState = this.view.state.apply(transaction);
-    //     this.view.updateState(newState);
-    //   },
-    // });
-    // document.execCommand('enableObjectResizing', false, 'false');
-    // document.execCommand('enableInlineTableEditing', false, 'false');
-  }
-
   public ngOnInit(): void {
+    this.state = new PMEditor({
+      extensions: [
+        Document(),
+        Paragraph({ addListNodes: true }),
+        Text(),
+        BlockQuote(),
+        Separator(),
+        Heading({
+          level: 6,
+        }),
+        CodeBlock(),
+        Table(),
+        HardBreak(),
+        Image(),
+        Link(),
+        Italic(),
+        Strong(),
+        Code(),
+        BasicKeymap(),
+        AngularAdapter({
+          applicationRef: this.applicationRef,
+          environmentInjector: this.environmentInjector,
+          zone: this.ngZone,
+          view: NgMenubarView,
+        }),
+        History(),
+      ],
+      nativePlugins: () => [dropCursor(), gapCursor()],
+    }).configure();
     return;
   }
 }

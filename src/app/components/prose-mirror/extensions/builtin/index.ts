@@ -14,3 +14,4 @@ export * from './strong';
 export * from './code';
 export * from './history';
 export * from './keymap';
+export * from './angular';
