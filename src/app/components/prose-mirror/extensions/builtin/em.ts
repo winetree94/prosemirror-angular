@@ -1,6 +1,8 @@
 import { DOMOutputSpec, MarkSpec } from 'prosemirror-model';
 import { PMPluginsFactory } from '../state';
 import { emDash, inputRules } from 'prosemirror-inputrules';
+import { keymap } from 'prosemirror-keymap';
+import { toggleMark } from 'prosemirror-commands';
 
 const emDOM: DOMOutputSpec = ['em', 0];
 const em: Record<string, MarkSpec> = {
@@ -26,9 +28,13 @@ export const EM = (): PMPluginsFactory => () => {
     marks: {
       ...em,
     },
-    plugins: () => [
+    plugins: (schema) => [
       inputRules({
         rules: [emDash],
+      }),
+      keymap({
+        'Mod-i': toggleMark(schema.marks['em']),
+        'Mod-I': toggleMark(schema.marks['em']),
       }),
     ],
   };

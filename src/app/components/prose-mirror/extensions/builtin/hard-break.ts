@@ -1,5 +1,8 @@
 import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 import { PMPluginsFactory } from '../state';
+import { keymap } from 'prosemirror-keymap';
+import { chainCommands, exitCode } from 'prosemirror-commands';
+import { mac } from './../../utils/user-agent';
 
 const brDOM: DOMOutputSpec = ['br'];
 const hard_break: Record<string, NodeSpec> = {
@@ -20,6 +23,20 @@ export const HardBreak = (): PMPluginsFactory => () => {
       ...hard_break,
     },
     marks: {},
-    plugins: () => [],
+    plugins: (schema) => {
+      const br = schema.nodes['hard_break'];
+      const cmd = chainCommands(exitCode, (state, dispatch) => {
+        if (dispatch)
+          dispatch(state.tr.replaceSelectionWith(br.create()).scrollIntoView());
+        return true;
+      });
+      return [
+        keymap({
+          'Mod-Enter': cmd,
+          'Shift-Enter': cmd,
+          ...(mac ? { 'Ctrl-Enter': cmd } : {}),
+        }),
+      ];
+    },
   };
 };

@@ -1,5 +1,5 @@
 import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
-import { addListNodes } from 'prosemirror-schema-list';
+import { addListNodes, wrapInList } from 'prosemirror-schema-list';
 import OrderedMap from 'orderedmap';
 import { PMPluginsFactory } from '../state';
 import { inputRules } from 'prosemirror-inputrules';
@@ -7,6 +7,7 @@ import {
   bulletListRule,
   orderedListRule,
 } from 'src/app/components/prose-mirror/plugins/input-rules/basic-input-rules';
+import { keymap } from 'prosemirror-keymap';
 
 const pDOM: DOMOutputSpec = ['p', { class: '' }, 0];
 const paragraph: Record<string, NodeSpec> = {
@@ -33,22 +34,27 @@ export interface ParagraphPluginConfigs {
 export const Paragraph =
   (pluginConfig: ParagraphPluginConfigs): PMPluginsFactory =>
   () => {
+    const nodes = pluginConfig.addListNodes ? paragraphWithList : paragraph;
+
     return {
-      nodes: {
-        ...(pluginConfig.addListNodes ? paragraphWithList : paragraph),
-      },
+      nodes: nodes,
       marks: {},
-      plugins: (schema) => [
-        inputRules({
-          rules: [
-            ...(pluginConfig.addListNodes
-              ? [
-                  orderedListRule(schema.nodes['ordered_list']),
-                  bulletListRule(schema.nodes['bullet_list']),
-                ]
-              : []),
-          ],
-        }),
-      ],
+      plugins: (schema) => {
+        if (!pluginConfig.addListNodes) {
+          return [];
+        }
+        return [
+          inputRules({
+            rules: [
+              orderedListRule(schema.nodes['ordered_list']),
+              bulletListRule(schema.nodes['bullet_list']),
+            ],
+          }),
+          keymap({
+            'Shift-Ctrl-8': wrapInList(schema.nodes['bullet_list']),
+            'Shift-Ctrl-9': wrapInList(schema.nodes['ordered_list']),
+          }),
+        ];
+      },
     };
   };

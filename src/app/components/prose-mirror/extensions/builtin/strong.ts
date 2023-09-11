@@ -1,5 +1,7 @@
 import { DOMOutputSpec, MarkSpec } from 'prosemirror-model';
 import { PMPluginsFactory } from '../state';
+import { keymap } from 'prosemirror-keymap';
+import { toggleMark } from 'prosemirror-commands';
 
 const strongDOM: DOMOutputSpec = ['strong', 0];
 const strong: Record<string, MarkSpec> = {
@@ -39,6 +41,11 @@ export const Strong = (): PMPluginsFactory => () => {
     marks: {
       ...strong,
     },
-    plugins: () => [],
+    plugins: (schema) => [
+      keymap({
+        'Mod-b': toggleMark(schema.marks['strong']),
+        'Mod-B': toggleMark(schema.marks['strong']),
+      }),
+    ],
   };
 };

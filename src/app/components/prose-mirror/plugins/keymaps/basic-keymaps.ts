@@ -65,44 +65,6 @@ export function buildBasicKeymap(schema: Schema) {
   bind('Mod-BracketLeft', lift);
   bind('Escape', selectParentNode);
 
-  if ((type = schema.marks['strong'])) {
-    bind('Mod-b', toggleMark(type));
-    bind('Mod-B', toggleMark(type));
-  }
-
-  if ((type = schema.marks['em'])) {
-    bind('Mod-i', toggleMark(type));
-    bind('Mod-I', toggleMark(type));
-  }
-
-  if ((type = schema.marks['code'])) {
-    bind('Mod-`', toggleMark(type));
-  }
-
-  if ((type = schema.nodes['bullet_list'])) {
-    bind('Shift-Ctrl-8', wrapInList(type));
-  }
-
-  if ((type = schema.nodes['ordered_list'])) {
-    bind('Shift-Ctrl-9', wrapInList(type));
-  }
-
-  if ((type = schema.nodes['blockquote'])) {
-    bind('Ctrl->', wrapIn(type));
-  }
-
-  if ((type = schema.nodes['hard_break'])) {
-    const br = type,
-      cmd = chainCommands(exitCode, (state, dispatch) => {
-        if (dispatch)
-          dispatch(state.tr.replaceSelectionWith(br.create()).scrollIntoView());
-        return true;
-      });
-    bind('Mod-Enter', cmd);
-    bind('Shift-Enter', cmd);
-    if (mac) bind('Ctrl-Enter', cmd);
-  }
-
   if ((type = schema.nodes['list_item'])) {
     bind('Enter', splitListItem(type));
     bind('Mod-[', liftListItem(type));
