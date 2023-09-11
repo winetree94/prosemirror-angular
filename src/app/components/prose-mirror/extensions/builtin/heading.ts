@@ -3,7 +3,9 @@ import { inputRules, textblockTypeInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { NodeSpec, NodeType } from 'prosemirror-model';
 import { Command } from 'prosemirror-state';
-import { PMPluginsFactory } from 'src/app/components/prose-mirror/extensions/state';
+import { PMPluginsFactory } from '../state';
+
+export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 const heading: Record<string, NodeSpec> = {
   heading: {
@@ -38,7 +40,7 @@ export function headingRule(nodeType: NodeType, maxLevel: number) {
 }
 
 export interface HeadingConfig {
-  level: 1 | 2 | 3 | 4 | 5 | 6;
+  level: HeadingLevel;
 }
 
 export const Heading = (config: HeadingConfig): PMPluginsFactory => {
